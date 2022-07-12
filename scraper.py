@@ -8,9 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 driver = webdriver.Chrome()
 
-driver.get("https://gorillamind.com/")
-
-
 
 
 def load_and_accept_cookies() -> webdriver.Chrome:
