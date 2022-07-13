@@ -10,7 +10,7 @@ driver = webdriver.Chrome()
 
 
 
-def load_and_accept_cookies() -> webdriver.Chrome:
+def open_website()-> webdriver.Chrome:
     '''
     Open Zoopla and accept the cookies
     
@@ -21,14 +21,19 @@ def load_and_accept_cookies() -> webdriver.Chrome:
     '''
     driver = webdriver.Chrome() 
     driver.get("https://gorillamind.com/")
+    time.sleep(3)
     link = driver.find_element(By.LINK_TEXT,"All Products")
     link.click()
     time.sleep(10)
-    modal = driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
-    modal.click()
-    
-    
-load_and_accept_cookies()
+    try:
+        modal = driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
+        modal.click()
+        time.sleep(3)
+    except:
+        time.sleep(3)
+        pass
+       
+open_website()
 
 
 
