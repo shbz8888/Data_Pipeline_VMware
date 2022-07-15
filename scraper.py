@@ -26,7 +26,14 @@ except:
         driver.quit() 
 
 
-page_1 = driver.find_element(By.XPATH, '//a[@class="hidden-product-link"]')
-#a_tag = page_1.find_element(By.TAG_NAME,'a')
-link = page_1.get_attribute('href')
-print(link)
+
+gear_container = driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
+gear_list = gear_container.find_elements(By.XPATH, './/a[@class="hidden-product-link"]')
+gear_link_list = []
+
+for gear in gear_list:
+        link = gear.get_attribute('href')
+        gear_link_list.append(link)
+
+print(f'There are {len(gear_link_list)} products in this page')
+print(gear_link_list)        
