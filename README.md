@@ -7,7 +7,7 @@ Milestone 1 & 2:
 *The new scraper class collects the link of the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link of the second page from the 'next' button and then navigates to the second page
 
 the code:
-'''python
+```python
 import selenium
 import time
 from selenium import webdriver
@@ -70,4 +70,4 @@ def go_function():
 if __name__=="__main__":
     go_function()
            
-'''
+```
