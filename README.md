@@ -5,6 +5,8 @@ Milestone 1 & 2:
 *Selenium was installed and imported in orer to navigate the page autonomously
 *Classes were used due to the functions within the scraper sharing similar outputs and inputs
 *The new scraper class collects the link of the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link of the second page from the 'next' button and then navigates to the second page
+* 'if __name__=="__main__":' was used so that the function only runs if its in the correct namespace 
+
 
 the code:
 ```python
@@ -18,14 +20,17 @@ from selenium.webdriver.support import expected_conditions as EC
 class Scraper:
         def __init__(self):
                 #constants go within the function and variables go inside the brackets above
+                '''initialise'''
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
 
         def get_website(self):
+                '''navigate to website'''
                 self.driver.get("https://gorillamind.com/")
                 time.sleep(1)
 
         def collect_all_products_link(self):
+                '''collect link for all products and click button to navigate to page'''
                 AllProducts = self.driver.find_element(By.LINK_TEXT,"All Products")
                 time.sleep(1)
                 link = AllProducts.get_attribute('href')
@@ -36,7 +41,7 @@ class Scraper:
                 time.sleep(10)
 
         def close_modal(self):
-        #closes pop up window
+                '''closes pop up window'''
                 try: 
                         modal = self.driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
                         print(modal)
@@ -47,6 +52,7 @@ class Scraper:
                         self.driver.quit() 
         
         def collect_next_page_link(self):
+                '''scrolls to bottom of page, gets link to final page and appends to link list'''
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 next = self.driver.find_element(By.LINK_TEXT,"Next")
                 link = next.get_attribute('href')
