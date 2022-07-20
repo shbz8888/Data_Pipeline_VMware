@@ -1,10 +1,10 @@
 # Data_Pipeline_VMware
 Milestone 1 & 2:
 
-*The website gorilla mind was chosen due to there being a lot of products available on the page for me to extract details from and me having some prior knowledge of the youtuber who owns the website and so some familiarity with its  contents
-*Selenium was installed and imported in orer to navigate the page autonomously
-*Classes were used due to the functions within the scraper sharing similar outputs and inputs
-*The new scraper class collects the link of the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link of the second page from the 'next' button and then navigates to the second page
+* The website gorilla mind was chosen due to there being a lot of products available on the page for me to extract details from and me having some prior knowledge of the youtuber who owns the website and so some familiarity with its  contents
+* Selenium was installed and imported in orer to navigate the page autonomously
+* Classes were used due to the functions within the scraper sharing similar outputs and inputs
+* The new scraper class collects the link of the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link of the second page from the 'next' button and then navigates to the second page
 * 'if __name__=="__main__":' was used so that the function only runs if its in the correct namespace 
 
 
@@ -77,3 +77,6 @@ if __name__=="__main__":
     go_function()
            
 ```
+
+As can be seen below the an array with the links is being returned:
+image.png
