@@ -5,7 +5,7 @@ Milestone 1 & 2:
 *Classes were used due to the functions within the scraper sharing similar outputs and inputs
 *The new scraper class collects the link of the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link of the second page from the 'next' button and then navigates to the second page
 
-'''python
+'''py
 import selenium
 import time
 from selenium import webdriver
