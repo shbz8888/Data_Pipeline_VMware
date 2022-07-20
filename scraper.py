@@ -44,6 +44,8 @@ class Scraper:
                         link = gear.get_attribute('href')
                         self.gear_link_list.append(link)
                 time.sleep(1)   
+                print(self.gear_link_list)
+                print(f' there are {len(self.gear_link_list)} products in this list')
                 return 
         
         def go_next_page(self):
@@ -52,15 +54,7 @@ class Scraper:
                 next.click()
                 time.sleep(2) 
 
-        def extract_links_2(self):
-                gear_container2 = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
-                gear_list2 = gear_container2.find_elements(By.XPATH, './/a[@class="hidden-product-link"]')
-                for gear2 in gear_list2:
-                        link = gear2.get_attribute('href')
-                        self.gear_link_list.append(link)
-                
-                print(f'There are {len(self.gear_link_list)} products in this page')
-                print(self.gear_link_list)
+       
 
         def main(self):
             self.get_website()
@@ -68,7 +62,7 @@ class Scraper:
             self.close_modal()
             self.extract_links()
             self.go_next_page()
-            self.extract_links_2()
+            self.extract_links()
 
 def go_function():
     go = Scraper()
