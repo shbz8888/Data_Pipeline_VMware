@@ -6,15 +6,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import gamma
 class Scraper:
         def __init__(self):
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
-
-
-
 
         def get_website(self):
                 self.driver.get("https://gorillamind.com/")
@@ -30,7 +26,6 @@ class Scraper:
                 AllProducts.click()
                 time.sleep(10)
 
-
         def close_modal(self):
         #closes pop up window
                 try: 
@@ -42,7 +37,6 @@ class Scraper:
                         print('No button found...exiting')
                         self.driver.quit() 
         
-        
         def collect_next_page_link(self):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 next = self.driver.find_element(By.LINK_TEXT,"Next")
@@ -53,20 +47,16 @@ class Scraper:
                 next.click()
                 time.sleep(2) 
 
-       
-
         def main(self):
             self.get_website()
             self.collect_all_products_link()
             self.close_modal()
             self.collect_next_page_link()
             
-
 def go_function():
     go = Scraper()
     go.main()
     pass
-
 
 if __name__=="__main__":
     go_function()
