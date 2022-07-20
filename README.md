@@ -78,4 +78,3 @@ if __name__=="__main__":
            
 ```
 
-As can be seen below the an array with the links is being returned:
