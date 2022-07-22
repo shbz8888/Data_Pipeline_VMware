@@ -32,11 +32,26 @@ class Scraper:
                         modal = self.driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
                         print(modal)
                         modal.click()
-                        print('Button clicked')    
+                        print('Button clicked') 
+                        time.sleep(1)   
                 except:
                         print('No button found...exiting')
                         self.driver.quit() 
-        
+
+        def collect_image(self):
+                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
+                image_container = gear_container.find_element(By.XPATH, './/img[@data-src="//cdn.shopify.com/s/files/1/0369/2580/0493/products/Gorilla-Mode-OG-Volcano-Burst_1600x.png?v=1656857311"]')
+                final_image  = image_container.get_attribute('data-src')
+                print(final_image)
+                time.sleep(1)
+        def collect_text(self):
+                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
+                money = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
+                print(money)
+                name = gear_container.find_element(By.XPATH, './/a[@class="product-thumbnail__title"]').text
+                print(name)
+                product_type = gear_container.find_element(By.XPATH, './/span[@class="product-thumbnail__type"]').text
+                print(product_type)
         def collect_next_page_link(self):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 next = self.driver.find_element(By.LINK_TEXT,"Next")
@@ -51,6 +66,8 @@ class Scraper:
             self.get_website()
             self.collect_all_products_link()
             self.close_modal()
+            self.collect_image()
+            self.collect_text()
             self.collect_next_page_link()
             
 def go_function():
