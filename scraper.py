@@ -2,6 +2,7 @@
 from os import link
 import selenium
 import time
+import uuid
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -12,6 +13,7 @@ class Scraper:
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
+                self.uid = uuid.uuid4()
 
         def get_website(self):
                 self.driver.get("https://gorillamind.com/")
@@ -68,7 +70,7 @@ class Scraper:
                 link = gear_container.find_element(By.XPATH, './/a[@class="hidden-product-link"]')
                 time.sleep(3)
                 link.click()
-                time.sleep(2)
+                time.sleep(4)
 
         def extract_text(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
@@ -84,7 +86,10 @@ class Scraper:
                 num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
                 print(num_reviews)
                 time.sleep(2)
-
+                ID = self.uid 
+                print(ID)
+                time.sleep(1)
+                
         def extract_image(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
