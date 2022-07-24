@@ -1,4 +1,5 @@
 # gamma
+from os import link
 import selenium
 import time
 from selenium import webdriver
@@ -16,12 +17,8 @@ class Scraper:
                 self.driver.get("https://gorillamind.com/")
                 time.sleep(1)
 
-        def collect_all_products_link(self):
+        def go_to_all_products_link(self):
                 AllProducts = self.driver.find_element(By.LINK_TEXT,"All Products")
-                time.sleep(1)
-                link = AllProducts.get_attribute('href')
-                #collects link for all products page 1
-                self.gear_link_list.append(link)
                 time.sleep(2)
                 AllProducts.click()
                 time.sleep(10)
@@ -38,13 +35,41 @@ class Scraper:
                         print('No button found...exiting')
                         self.driver.quit() 
 
-        def collect_image(self):
+        def extract_links(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
-                image_container = gear_container.find_element(By.XPATH, './/img[@data-src="//cdn.shopify.com/s/files/1/0369/2580/0493/products/Gorilla-Mode-OG-Volcano-Burst_1600x.png?v=1656857311"]')
-                final_image  = image_container.get_attribute('data-src')
-                print(final_image)
+                gear_list = gear_container.find_elements(By.XPATH, './/a[@class="hidden-product-link"]')
+                
+
+                for gear in gear_list:
+                        link = gear.get_attribute('href')
+                        self.gear_link_list.append(link)
+                time.sleep(1)   
+                print(self.gear_link_list)
+                print(f' there are {len(self.gear_link_list)} products in this list')
+                print(type(self.gear_link_list))
                 time.sleep(1)
-        def collect_text(self):
+                return 
+
+        def go_back_to_page_1(self):
+                previous = self.driver.find_element(By.LINK_TEXT,"Previous")
+                time.sleep(2)
+                previous.click()
+                time.sleep(2)
+
+       
+        def go_to_next_page(self):
+                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                next = self.driver.find_element(By.LINK_TEXT,"Next")
+                next.click()
+                time.sleep(2) 
+
+        def enter_link(self):
+                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
+                link = gear_container.find_element(By.XPATH, './/a[@class="hidden-product-link"]')
+                link.click()
+                time.sleep(2)
+
+        def extract_info(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
                 money = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
                 print(money)
@@ -52,23 +77,19 @@ class Scraper:
                 print(name)
                 product_type = gear_container.find_element(By.XPATH, './/span[@class="product-thumbnail__type"]').text
                 print(product_type)
-        def collect_next_page_link(self):
-                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                next = self.driver.find_element(By.LINK_TEXT,"Next")
-                link = next.get_attribute('href')
-                #collects link for all products page 2
-                self.gear_link_list.append(link)
-                print(self.gear_link_list)
-                next.click()
-                time.sleep(2) 
+
+       
 
         def main(self):
             self.get_website()
-            self.collect_all_products_link()
+            self.go_to_all_products_link()
             self.close_modal()
-            self.collect_image()
-            self.collect_text()
-            self.collect_next_page_link()
+            self.extract_links()
+            self.go_to_next_page()
+            self.extract_links()
+            self.go_back_to_page_1()
+            self.enter_link()
+            self.extract_info()
             
 def go_function():
     go = Scraper()
