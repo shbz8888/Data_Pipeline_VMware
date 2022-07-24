@@ -52,9 +52,9 @@ class Scraper:
 
         def go_back_to_page_1(self):
                 previous = self.driver.find_element(By.LINK_TEXT,"Previous")
-                time.sleep(2)
+                time.sleep(3)
                 previous.click()
-                time.sleep(2)
+                time.sleep(3)
 
        
         def go_to_next_page(self):
@@ -66,17 +66,31 @@ class Scraper:
         def enter_link(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
                 link = gear_container.find_element(By.XPATH, './/a[@class="hidden-product-link"]')
+                time.sleep(3)
                 link.click()
                 time.sleep(2)
 
-        def extract_info(self):
-                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
+        def extract_text(self):
+                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 money = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
                 print(money)
-                name = gear_container.find_element(By.XPATH, './/a[@class="product-thumbnail__title"]').text
+                name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
                 print(name)
-                product_type = gear_container.find_element(By.XPATH, './/span[@class="product-thumbnail__type"]').text
-                print(product_type)
+                description_container= gear_container.find_element(By.XPATH, './/div[@class="description content"]')
+                description = description_container.find_element(By.TAG_NAME, "p").text
+                print(description)
+                size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
+                print(size)
+                num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
+                print(num_reviews)
+                time.sleep(2)
+
+        def extract_image(self):
+                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
+                image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
+                final_image  = image_container.get_attribute('data-zoom-src')
+                print(final_image)
+                time.sleep(1)
 
        
 
@@ -89,7 +103,8 @@ class Scraper:
             self.extract_links()
             self.go_back_to_page_1()
             self.enter_link()
-            self.extract_info()
+            self.extract_text()
+            self.extract_image()
             
 def go_function():
     go = Scraper()
