@@ -74,10 +74,10 @@ class Scraper:
 
         def extract_text(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
-                money = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
-                print(money)
                 name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
                 print(name)
+                price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
+                print(price)
                 description_container= gear_container.find_element(By.XPATH, './/div[@class="description content"]')
                 description = description_container.find_element(By.TAG_NAME, "p").text
                 print(description)
@@ -89,15 +89,26 @@ class Scraper:
                 ID = self.uid 
                 print(ID)
                 time.sleep(1)
-                
+                return name, price, description, size, num_reviews, ID 
+
         def extract_image(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
                 final_image  = image_container.get_attribute('data-zoom-src')
                 print(final_image)
                 time.sleep(1)
+                return final_image
 
-       
+        def create_dict(self, name, price, description, size, num_reviews, ID, final_image ):
+                dict_properties = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [],'image': [], 'UUID': [], 'Image': []}
+                dict_properties['Name'].append(name)
+                dict_properties['Image'].append(final_image)
+                dict_properties['Price'].append(price)
+                dict_properties['Description'].append(description)
+                dict_properties['Size'].append(size)
+                dict_properties['Num_reviews'].append(num_reviews)
+                dict_properties['UUID'].append(ID)
+               
 
         def main(self):
             self.get_website()
@@ -110,6 +121,9 @@ class Scraper:
             self.enter_link()
             self.extract_text()
             self.extract_image()
+            name, price, description, size, num_reviews, ID  = self.extract_text()
+            final_image = self.extract_image()
+            self.create_dict(name, price, description, size, num_reviews, ID, final_image)
             
 def go_function():
     go = Scraper()
