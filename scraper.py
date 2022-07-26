@@ -5,6 +5,7 @@ import time
 import uuid
 import json
 import os
+import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -93,13 +94,15 @@ class Scraper:
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
                 final_image  = image_container.get_attribute('data-zoom-src')
+                https = 'https:'
+                final_image_link = https + final_image
                 time.sleep(1)
-                return final_image
+                return final_image_link
 
-        def create_dict(self, name, price, description, size, num_reviews, strID, final_image ):
+        def create_dict(self, name, price, description, size, num_reviews, strID, final_image_link ):
                 dict_products = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [], 'UUID': [], 'Image': []}
                 dict_products['Name'].append(name)
-                dict_products['Image'].append(final_image)
+                dict_products['Image'].append(final_image_link)
                 dict_products['Price'].append(price)
                 dict_products['Description'].append(description)
                 dict_products['Size'].append(size)
@@ -120,8 +123,8 @@ class Scraper:
             self.extract_text()
             self.extract_image()
             name, price, description, size, num_reviews, strID  = self.extract_text()
-            final_image = self.extract_image()
-            dict_products = self.create_dict(name, price, description, size, num_reviews, strID, final_image)
+            final_image_link = self.extract_image()
+            dict_products = self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
             path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
             os.chdir(path)
             os.makedirs(f'{strID}')
@@ -131,6 +134,13 @@ class Scraper:
             jsonFile = open("data.json", "w")
             jsonFile.write(jsonString)
             jsonFile.close()
+            os.makedirs('Images')
+            path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
+            os.chdir(path3)
+            with open(f'{strID}_1.png', 'wb') as f:
+                f.write(requests.get(final_image_link).content)
+            
+
 
 def go_function():
     go = Scraper()
