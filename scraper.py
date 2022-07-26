@@ -1,8 +1,10 @@
-# gamma
+
 from os import link
 import selenium
 import time
 import uuid
+import json
+import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -21,7 +23,7 @@ class Scraper:
 
         def go_to_all_products_link(self):
                 AllProducts = self.driver.find_element(By.LINK_TEXT,"All Products")
-                time.sleep(2)
+                time.sleep(3)
                 AllProducts.click()
                 time.sleep(10)
 
@@ -54,9 +56,9 @@ class Scraper:
 
         def go_back_to_page_1(self):
                 previous = self.driver.find_element(By.LINK_TEXT,"Previous")
-                time.sleep(3)
+                time.sleep(4)
                 previous.click()
-                time.sleep(3)
+                time.sleep(4)
 
        
         def go_to_next_page(self):
@@ -68,46 +70,42 @@ class Scraper:
         def enter_link(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
                 link = gear_container.find_element(By.XPATH, './/a[@class="hidden-product-link"]')
-                time.sleep(3)
+                time.sleep(4)
                 link.click()
                 time.sleep(4)
 
         def extract_text(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
-                print(name)
                 price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
-                print(price)
                 description_container= gear_container.find_element(By.XPATH, './/div[@class="description content"]')
                 description = description_container.find_element(By.TAG_NAME, "p").text
-                print(description)
                 size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
-                print(size)
                 num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
-                print(num_reviews)
                 time.sleep(2)
                 ID = self.uid 
-                print(ID)
+                strID = str(ID)
+                print(strID)
                 time.sleep(1)
-                return name, price, description, size, num_reviews, ID 
+                return name, price, description, size, num_reviews, strID 
 
         def extract_image(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
                 final_image  = image_container.get_attribute('data-zoom-src')
-                print(final_image)
                 time.sleep(1)
                 return final_image
 
-        def create_dict(self, name, price, description, size, num_reviews, ID, final_image ):
-                dict_properties = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [],'image': [], 'UUID': [], 'Image': []}
-                dict_properties['Name'].append(name)
-                dict_properties['Image'].append(final_image)
-                dict_properties['Price'].append(price)
-                dict_properties['Description'].append(description)
-                dict_properties['Size'].append(size)
-                dict_properties['Num_reviews'].append(num_reviews)
-                dict_properties['UUID'].append(ID)
+        def create_dict(self, name, price, description, size, num_reviews, strID, final_image ):
+                dict_products = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [], 'UUID': [], 'Image': []}
+                dict_products['Name'].append(name)
+                dict_products['Image'].append(final_image)
+                dict_products['Price'].append(price)
+                dict_products['Description'].append(description)
+                dict_products['Size'].append(size)
+                dict_products['Num_reviews'].append(num_reviews)
+                dict_products['UUID'].append(strID)
+                return dict_products
                
 
         def main(self):
@@ -121,10 +119,19 @@ class Scraper:
             self.enter_link()
             self.extract_text()
             self.extract_image()
-            name, price, description, size, num_reviews, ID  = self.extract_text()
+            name, price, description, size, num_reviews, strID  = self.extract_text()
             final_image = self.extract_image()
-            self.create_dict(name, price, description, size, num_reviews, ID, final_image)
-            
+            dict_products = self.create_dict(name, price, description, size, num_reviews, strID, final_image)
+            path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
+            os.chdir(path)
+            os.makedirs(f'{strID}')
+            path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}")
+            os.chdir(path2)
+            jsonString = json.dumps(dict_products)
+            jsonFile = open("data.json", "w")
+            jsonFile.write(jsonString)
+            jsonFile.close()
+
 def go_function():
     go = Scraper()
     go.main()
