@@ -92,7 +92,7 @@ class Scraper:
 
         def extract_image(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
-                image_container = gear_container.find_element(By.XPATH, './/img[@class="lazyload--fade-in lazyautosizes ls-is-cached lazyloaded"]')
+                image_container = gear_container.find_element(By.XPATH, './/img[@alt="Gorilla Mode"]')
                 final_image  = image_container.get_attribute('data-zoom-src')
                 https = 'https:'
                 final_image_link = https + final_image
@@ -110,7 +110,23 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
+        def save_dictionary_locally(self,dict_products,strID,final_image_link):
+                path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
+                os.chdir(path)
+                os.makedirs(f'{strID}')
+                path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}")
+                os.chdir(path2)
+                jsonString = json.dumps(dict_products)
+                jsonFile = open("data.json", "w")
+                jsonFile.write(jsonString)
+                jsonFile.close()
+                os.makedirs('Images')
+                path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
+                os.chdir(path3)
+                with open(f'{strID}_1.png', 'wb') as f:
+                        f.write(requests.get(final_image_link).content)
 
+        
         def main(self):
             self.get_website()
             self.go_to_all_products_link()
@@ -120,25 +136,10 @@ class Scraper:
             self.extract_links()
             self.go_back_to_page_1()
             self.enter_link()
-            self.extract_text()
-            self.extract_image()
-            name, price, description, size, num_reviews, strID  = self.extract_text()
+            name, price, description, size, num_reviews, strID = self.extract_text()
             final_image_link = self.extract_image()
-            dict_products = self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
-            path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
-            os.chdir(path)
-            os.makedirs(f'{strID}')
-            path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}")
-            os.chdir(path2)
-            jsonString = json.dumps(dict_products)
-            jsonFile = open("data.json", "w")
-            jsonFile.write(jsonString)
-            jsonFile.close()
-            os.makedirs('Images')
-            path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
-            os.chdir(path3)
-            with open(f'{strID}_1.png', 'wb') as f:
-                f.write(requests.get(final_image_link).content)
+            dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
+            self.save_dictionary_locally(dict_products, strID, final_image_link)
             
 
 
