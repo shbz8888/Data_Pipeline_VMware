@@ -135,4 +135,6 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
                 f.write(requests.get(final_image_link).content)
 ```
 * the main method was also expanded in order to accomodate the new methods
-![Screenshot](Screenshot from 2022-07-27 16-46-59.png)
+
+
+![Alt text](/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Screenshot from 2022-07-27 16-46-59.png?raw-true "Optional Title")
