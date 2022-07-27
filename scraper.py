@@ -29,7 +29,7 @@ class Scraper:
                 time.sleep(10)
 
         def close_modal(self):
-        #closes pop up window
+                #closes pop up window
                 try: 
                         modal = self.driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
                         print(modal)
@@ -100,6 +100,7 @@ class Scraper:
                 return final_image_link
 
         def create_dict(self, name, price, description, size, num_reviews, strID, final_image_link ):
+                #information stored in dictionary
                 dict_products = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [], 'UUID': [], 'Image': []}
                 dict_products['Name'].append(name)
                 dict_products['Image'].append(final_image_link)
@@ -124,6 +125,7 @@ class Scraper:
                 path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
                 os.chdir(path3)
                 with open(f'{strID}_1.png', 'wb') as f:
+                        #downloads image in new folder
                         f.write(requests.get(final_image_link).content)
 
         
