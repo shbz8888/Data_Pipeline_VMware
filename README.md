@@ -78,3 +78,60 @@ if __name__=="__main__":
            
 ```
 
+Milestone 3:
+* Methods were created to retrieve key details from one of the pages, those details being: name, price, description, size, number of reviews, and the link for an image
+* these methods were called extract_image and extract_text
+```python
+def extract_text(self):
+        gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
+        name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
+        price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
+        description_container= gear_container.find_element(By.XPATH, './/div[@class="description content"]')
+        description = description_container.find_element(By.TAG_NAME, "p").text
+        size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
+        num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
+        time.sleep(2)
+        ID = self.uid 
+        strID = str(ID)
+        print(strID)
+        time.sleep(1)
+        return name, price, description, size, num_reviews, strID 
+
+def extract_image(self):
+        gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
+        image_container = gear_container.find_element(By.XPATH, './/img[@alt="Gorilla Mode"]')
+        final_image  = image_container.get_attribute('data-zoom-src')
+        https = 'https:'
+        final_image_link = https + final_image
+        time.sleep(1)
+        return final_image_link
+```
+* the information was stored in a dictionary and a UUID was generated, UUID was used because it would generate a unique ID each time the code ran and could be used later to refer to the product dictionary saved earlier
+* the information was then stored and saved locally in a folder called raw_data, the dictionary being saved as a .json file and the image being downloaded using the link in the dictionary
+* a new folder was created for the product within the raw_data folder, this new folder was named using the UUID so that each product tha would eventually be scraped would not be confused
+* within this new prodoct folder alongside the .json file for the dictionary an images folder was created which contained the downloaded image, the image was downloaded using the image link in the dictionary 
+```python
+def save_dictionary_locally(self,dict_products,strID,final_image_link):
+        path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
+        os.chdir(path)
+        os.makedirs(f'{strID}')
+        path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}")
+        os.chdir(path2)
+        jsonString = json.dumps(dict_products)
+        jsonFile = open("data.json", "w")
+        #creates new folder for product in the 'raw_data' folder
+        jsonFile.write(jsonString)
+        jsonFile.close()
+        
+```
+* the code for extracting the text, extracting the image link, downloading the image, and saving these locally were split into individual methods in order to increase granularity for easier reading and debugging in line with good software engineering practice. This meant that each method only dealt with one concern.
+```python
+   def download_image(self,strID,final_image_link):
+        os.makedirs('Images')
+        path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
+        os.chdir(path3)
+        with open(f'{strID}_1.png', 'wb') as f:
+                #downloads image in new 'Images' folder
+                f.write(requests.get(final_image_link).content)
+```
+* the main method was also expanded in order to accomodate the new methods
