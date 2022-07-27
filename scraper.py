@@ -119,13 +119,14 @@ class Scraper:
                 os.chdir(path2)
                 jsonString = json.dumps(dict_products)
                 jsonFile = open("data.json", "w")
+                #creates new folder for product in the 'raw_data' folder
                 jsonFile.write(jsonString)
                 jsonFile.close()
                 os.makedirs('Images')
                 path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
                 os.chdir(path3)
                 with open(f'{strID}_1.png', 'wb') as f:
-                        #downloads image in new folder
+                        #downloads image in new 'Images' folder
                         f.write(requests.get(final_image_link).content)
 
         
