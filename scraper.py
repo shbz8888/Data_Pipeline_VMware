@@ -87,12 +87,13 @@ class Scraper:
                 ID = self.uid 
                 strID = str(ID)
                 print(strID)
-                time.sleep(1)
+                time.sleep(5)
                 return name, price, description, size, num_reviews, strID 
 
         def extract_image(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
-                image_container = gear_container.find_element(By.XPATH, './/img[@alt="Gorilla Mode"]')
+                image_container = gear_container.find_element(By.XPATH, './/img[@data-sizes="auto"]')
+                time.sleep(5)
                 final_image  = image_container.get_attribute('data-zoom-src')
                 https = 'https:'
                 final_image_link = https + final_image
@@ -111,7 +112,7 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
-        def save_dictionary_locally(self,dict_products,strID,final_image_link):
+        def save_dictionary_locally(self,dict_products,strID):
                 path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
                 os.chdir(path)
                 os.makedirs(f'{strID}')
@@ -122,6 +123,8 @@ class Scraper:
                 #creates new folder for product in the 'raw_data' folder
                 jsonFile.write(jsonString)
                 jsonFile.close()
+
+        def download_image(self,strID,final_image_link):
                 os.makedirs('Images')
                 path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
                 os.chdir(path3)
@@ -142,7 +145,8 @@ class Scraper:
             name, price, description, size, num_reviews, strID = self.extract_text()
             final_image_link = self.extract_image()
             dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
-            self.save_dictionary_locally(dict_products, strID, final_image_link)
+            self.save_dictionary_locally(dict_products, strID)
+            self.download_image(strID,final_image_link)
             
 
 
