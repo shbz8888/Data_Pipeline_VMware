@@ -16,7 +16,7 @@ class Scraper:
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
-                self.uid = uuid.uuid4()
+                 
 
         def get_website(self):
                 self.driver.get("https://gorillamind.com/")
@@ -79,12 +79,11 @@ class Scraper:
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
                 price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
-                description_container= gear_container.find_element(By.XPATH, './/div[@class="description content"]')
-                description = description_container.find_element(By.TAG_NAME, "p").text
+                description= gear_container.find_element(By.XPATH, './/div[@class="description content"]').text
                 size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
                 num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
                 time.sleep(2)
-                ID = self.uid 
+                ID = uuid.uuid4()
                 strID = str(ID)
                 print(strID)
                 time.sleep(5)
@@ -132,6 +131,19 @@ class Scraper:
                         #downloads image in new 'Images' folder
                         f.write(requests.get(final_image_link).content)
 
+        def enter_links(self):
+                for link in self.gear_link_list:
+                        self.driver.get(link)
+                        time.sleep(3)
+                        name, price, description, size, num_reviews, strID = self.extract_text()
+                        final_image_link = self.extract_image()
+                        dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
+                        self.save_dictionary_locally(dict_products, strID)
+                        self.download_image(strID,final_image_link)
+                        time.sleep(2)
+            
+
+
         
         def main(self):
             self.get_website()
@@ -141,12 +153,8 @@ class Scraper:
             self.go_to_next_page()
             self.extract_links()
             self.go_back_to_page_1()
-            self.enter_link()
-            name, price, description, size, num_reviews, strID = self.extract_text()
-            final_image_link = self.extract_image()
-            dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
-            self.save_dictionary_locally(dict_products, strID)
-            self.download_image(strID,final_image_link)
+            self.enter_links()
+            
             
 
 
