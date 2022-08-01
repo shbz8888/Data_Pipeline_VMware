@@ -12,13 +12,62 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 class Scraper:
+        '''
+        A scraper that extracts the product data from the website Gorilla Mind
+
+        Methods:
+        -------
+        get_website()
+                opens the website in google chrome.
+        go_to_all_products_link()
+                navigates to the all products section.
+        close_modal()
+                Closes the sign up pop up window.
+        extract_links()
+                begins extracting and storing the links for each individual product in the gear_link_list.
+        go_to_next_page()
+                navigates to the next page.
+        go_back_to_page_1()
+                navigates to page 1.
+        enter_link()
+                enters a link form the gear_link_list.
+        extract_text()
+                extracts the name, price, description, size, number of reviews, and generates a unique ID.
+        extract_image()
+                extracts the image link for the product.
+        create_dict()
+                stores all of the extacted text and image link in a dictionary.
+        save_dictionary_locally()
+                creates a folder for the product and stores the dictionary inside.
+        download_image()
+                creates an images folder within the product folder and downloads the image there.
+        enter_links()
+                visits each link within the gear_link_list and extracts the text and image data by calling the above methods.
+        remove_obselete_link()
+                remove 1 link from the gear_link_list which has a product without much data.
+        main()
+                calls all of the above methods in order.
+        '''
         def __init__(self):
+                '''
+                initialiser
+
+                Attributes:
+                ----------
+                gear_link_list: list
+                        Empty list of product links to be filled by scraper
+                driver: N/A (import)
+                        module used to open and control google chrome for data scraping
+                '''
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
                  
 
         def get_website(self):
+                '''
+                Opens a google chrome window and visits the website Gorilla Mind
+                '''
                 self.driver.get("https://gorillamind.com/")
                 time.sleep(1)
 
@@ -54,19 +103,18 @@ class Scraper:
                 print(type(self.gear_link_list))
                 time.sleep(1)
                 return 
-
-        def go_back_to_page_1(self):
-                previous = self.driver.find_element(By.LINK_TEXT,"Previous")
-                time.sleep(4)
-                previous.click()
-                time.sleep(4)
-
        
         def go_to_next_page(self):
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 next = self.driver.find_element(By.LINK_TEXT,"Next")
                 next.click()
-                time.sleep(2) 
+                time.sleep(2)
+
+        def go_back_to_page_1(self):
+                previous = self.driver.find_element(By.LINK_TEXT,"Previous")
+                time.sleep(4)
+                previous.click()
+                time.sleep(4) 
 
         def enter_link(self):
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container collection-matrix"]')
@@ -81,22 +129,31 @@ class Scraper:
                 price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
                 description= gear_container.find_element(By.XPATH, './/div[@class="description content"]').text
                 size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
-                num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
-                time.sleep(2)
-                ID = uuid.uuid4()
-                strID = str(ID)
-                print(strID)
-                time.sleep(5)
+                try:
+                        num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
+                        ID = uuid.uuid4()
+                        strID = str(ID)
+                        print(strID)
+                        time.sleep(1)
+                except:
+                        num_reviews = "NaN"
+                        ID = uuid.uuid4()
+                        strID = str(ID)
+                        print(strID)
+                        time.sleep(1) 
                 return name, price, description, size, num_reviews, strID 
-
+                
         def extract_image(self):
-                gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
-                image_container = gear_container.find_element(By.XPATH, './/img[@data-sizes="auto"]')
-                time.sleep(5)
-                final_image  = image_container.get_attribute('data-zoom-src')
-                https = 'https:'
-                final_image_link = https + final_image
-                time.sleep(1)
+                try:
+                        gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
+                        image_container = gear_container.find_element(By.XPATH, './/img[@data-sizes="auto"]')
+                        time.sleep(5)
+                        final_image  = image_container.get_attribute('data-zoom-src')
+                        https = 'https:'
+                        final_image_link = https + final_image
+                        time.sleep(1)
+                except:
+                        final_image_link = 'none'
                 return final_image_link
 
         def create_dict(self, name, price, description, size, num_reviews, strID, final_image_link ):
@@ -111,11 +168,11 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
-        def save_dictionary_locally(self,dict_products,strID):
+        def save_dictionary_locally(self,dict_products,strID,name):
                 path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
                 os.chdir(path)
-                os.makedirs(f'{strID}')
-                path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}")
+                os.makedirs(f'{name}')
+                path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{name}")
                 os.chdir(path2)
                 jsonString = json.dumps(dict_products)
                 jsonFile = open("data.json", "w")
@@ -123,25 +180,31 @@ class Scraper:
                 jsonFile.write(jsonString)
                 jsonFile.close()
 
-        def download_image(self,strID,final_image_link):
-                os.makedirs('Images')
-                path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{strID}/Images")
-                os.chdir(path3)
-                with open(f'{strID}_1.png', 'wb') as f:
-                        #downloads image in new 'Images' folder
-                        f.write(requests.get(final_image_link).content)
+        def download_image(self,strID,final_image_link,name):
+                if final_image_link == 'none':
+                        pass
+                else:
+                        os.makedirs('Images')
+                        path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{name}/Images")
+                        os.chdir(path3)
+                        with open(f'{strID}_1.png', 'wb') as f:
+                                #downloads image in new 'Images' folder
+                                f.write(requests.get(final_image_link).content)
 
         def enter_links(self):
                 for link in self.gear_link_list:
-                        self.driver.get(link)
                         time.sleep(3)
+                        self.driver.get(link)
+                        time.sleep(5)
                         name, price, description, size, num_reviews, strID = self.extract_text()
                         final_image_link = self.extract_image()
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
-                        self.save_dictionary_locally(dict_products, strID)
-                        self.download_image(strID,final_image_link)
-                        time.sleep(2)
-            
+                        self.save_dictionary_locally(dict_products, strID,name)
+                        self.download_image(strID,final_image_link,name)
+                        time.sleep(1)
+        
+        def remove_obselete_link(self):
+                self.gear_link_list.remove('https://gorillamind.com/collections/all/products/gorilla-mode-energy-sample')
 
 
         
@@ -153,6 +216,7 @@ class Scraper:
             self.go_to_next_page()
             self.extract_links()
             self.go_back_to_page_1()
+            self.remove_obselete_link()
             self.enter_links()
             
             
