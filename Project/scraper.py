@@ -62,14 +62,14 @@ class Scraper:
                 self.driver = webdriver.Chrome()
                  
 
-        def get_website(self):
+        def __get_website__(self):
                 '''
                 Opens a google chrome window and visits the website Gorilla Mind
                 '''
                 self.driver.get("https://gorillamind.com/")
                 time.sleep(1)
 
-        def go_to_all_products_link(self):
+        def __go_to_all_products_link__(self):
                 '''
                 Finds the All Products button and clicks it
                 '''
@@ -78,7 +78,7 @@ class Scraper:
                 AllProducts.click()
                 time.sleep(10)
 
-        def close_modal(self):
+        def __close_modal__(self):
                 '''
                 Finds the cross off button on the sign up window and clicks it
                 '''
@@ -115,7 +115,7 @@ class Scraper:
                 time.sleep(1)
                 return 
        
-        def go_to_next_page(self):
+        def __go_to_next_page__(self):
                 '''
                 Scrolls to the bottom of the page and clicks the next page button
                 '''
@@ -124,7 +124,7 @@ class Scraper:
                 next.click()
                 time.sleep(2)
 
-        def go_back_to_page_1(self):
+        def __go_back_to_page_1__(self):
                 '''
                 Finds the previous page button and clicks it 
                 '''
@@ -230,7 +230,7 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
-        def save_dictionary_locally(self,dict_products,strID,name):
+        def __save_dictionary_locally__(self,dict_products,strID,name):
                 '''
                 Creates a new folder for each product, converts the dictionary to json and stores it in the folder
                 
@@ -254,7 +254,7 @@ class Scraper:
                 jsonFile.write(jsonString)
                 jsonFile.close()
 
-        def download_image(self,strID,final_image_link,name):
+        def __download_image__(self,strID,final_image_link,name):
                 '''
                 Creates a new folder within the individual product folder called 'Images' and downloads the image there
                 
@@ -305,19 +305,21 @@ class Scraper:
                 '''
                 self.gear_link_list.remove('https://gorillamind.com/collections/all/products/gorilla-mode-energy-sample')
 
-
+        def visit_individual_link(self):
+                self.driver.get("https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
+                
         
         def main(self):
                 '''
                 Main function which calls all the other functions ordered correctly
                 '''
-                self.get_website()
-                self.go_to_all_products_link()
-                self.close_modal()
+                self.__get_website__()
+                self.__go_to_all_products_link__()
+                self.__close_modal__()
                 self.extract_links()
-                self.go_to_next_page()
+                self.__go_to_next_page__()
                 self.extract_links()
-                self.go_back_to_page_1()
+                self.__go_back_to_page_1__()
                 self.remove_obselete_link()
                 self.enter_links()
             
