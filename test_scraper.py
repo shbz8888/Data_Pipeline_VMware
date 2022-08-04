@@ -42,7 +42,7 @@ class ScraperTestCase(unittest.TestCase):
         print('test_dict')
         name, price, description, size, num_reviews, strID = Scraper.extract_text(unittest.TestCase) 
         final_image_link, final_image = Scraper.extract_image(unittest.TestCase)  
-        dict_products = Scraper.create_dict(unittest.TestCase, name, price, description, size, num_reviews,strID,final_image_link)
+        dict_products = Scraper.create_dict(unittest.TestCase, name, price, description, size, num_reviews, strID, final_image_link)
         self.assertEqual(num_reviews,"NaN")
         self.assertEqual(dict_products['Name'],[name])
         self.assertEqual(dict_products['Price'],[price])
