@@ -196,7 +196,7 @@ class Scraper:
                         time.sleep(1)
                 except:
                         final_image_link = 'none'
-                return final_image_link
+                return final_image_link, final_image
 
         def create_dict(self, name, price, description, size, num_reviews, strID, final_image_link ):
                 '''
@@ -307,7 +307,7 @@ class Scraper:
 
         def visit_individual_link(self):
                 self.driver.get("https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
-                
+                time.sleep(1)
         
         def main(self):
                 '''
