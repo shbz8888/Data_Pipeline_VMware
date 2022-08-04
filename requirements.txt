@@ -8,4 +8,4 @@ notebook==6.4.12
 numpy==1.23.1
 selenium==4.3.0
 urllib3==1.26.5
-
+Chromedriver and google Chrome have to be the same version, in my case 102
