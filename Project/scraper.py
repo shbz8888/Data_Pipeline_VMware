@@ -43,6 +43,8 @@ class Scraper:
                 visits each link within the gear_link_list and extracts the text and image data by calling the above methods.
         __remove_obselete_link()
                 remove 1 link from the gear_link_list which has a product without much data.
+        visit_individual_link()
+                made to make testing easier, called during unit testing.
         __main()
                 calls all of the above methods in order.
         '''
