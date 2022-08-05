@@ -316,7 +316,7 @@ class Scraper:
                 '''
                 self.__get_website()
                 self.__go_to_all_products_link()
-                self.__close_modal()
+                self.close_modal()
                 self.extract_links()
                 self.__go_to_next_page()
                 self.extract_links()
