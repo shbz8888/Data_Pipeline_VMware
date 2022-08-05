@@ -17,17 +17,17 @@ class Scraper:
 
         Methods:
         -------
-        get_website()
+        __get_website()
                 opens the website in google chrome.
-        go_to_all_products_link()
+        __go_to_all_products_link()
                 navigates to the all products section.
-        close_modal()
+        __close_modal()
                 Closes the sign up pop up window.
-        extract_links()
+        __extract_links()
                 begins extracting and storing the links for each individual product in the gear_link_list.
-        go_to_next_page()
+        __go_to_next_page()
                 navigates to the next page.
-        go_back_to_page_1()
+        __go_back_to_page_1()
                 navigates to page 1.
         extract_text()
                 extracts the name, price, description, size, number of reviews, and generates a unique ID.
@@ -35,15 +35,15 @@ class Scraper:
                 extracts the image link for the product.
         create_dict()
                 stores all of the extacted text and image link in a dictionary.
-        save_dictionary_locally()
+        __save_dictionary_locally()
                 creates a folder for the product and stores the dictionary inside.
-        download_image()
+        __download_image()
                 creates an images folder within the product folder and downloads the image there.
-        enter_links()
+        __extract_product_info()
                 visits each link within the gear_link_list and extracts the text and image data by calling the above methods.
-        remove_obselete_link()
+        __remove_obselete_link()
                 remove 1 link from the gear_link_list which has a product without much data.
-        main()
+        __main()
                 calls all of the above methods in order.
         '''
         def __init__(self):
@@ -62,23 +62,24 @@ class Scraper:
                 self.driver = webdriver.Chrome()
                  
 
-        def __get_website__(self):
+        def __get_website(self):
                 '''
                 Opens a google chrome window and visits the website Gorilla Mind
                 '''
-                self.driver.get("https://gorillamind.com/")
+                URL = "https://gorillamind.com/"
+                self.driver.get(URL)
                 time.sleep(1)
 
-        def __go_to_all_products_link__(self):
+        def __go_to_all_products_link(self):
                 '''
                 Finds the All Products button and clicks it
                 '''
-                AllProducts = self.driver.find_element(By.LINK_TEXT,"All Products")
-                time.sleep(3)
-                AllProducts.click()
-                time.sleep(10)
+                all_products = self.driver.find_element(By.LINK_TEXT,"All Products")
+                time.sleep(1)
+                all_products.click()
+                time.sleep(7)
 
-        def __close_modal__(self):
+        def __close_modal(self):
                 '''
                 Finds the cross off button on the sign up window and clicks it
                 '''
@@ -86,8 +87,7 @@ class Scraper:
                         modal = self.driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
                         print(modal)
                         modal.click()
-                        print('Button clicked') 
-                        time.sleep(1)   
+                        print('Button clicked')   
                 except:
                         print('No button found...exiting')
                         self.driver.quit() 
@@ -111,11 +111,10 @@ class Scraper:
                 time.sleep(1)   
                 print(self.gear_link_list)
                 print(f' there are {len(self.gear_link_list)} products in this list')
-                print(type(self.gear_link_list))
                 time.sleep(1)
                 return 
        
-        def __go_to_next_page__(self):
+        def __go_to_next_page(self):
                 '''
                 Scrolls to the bottom of the page and clicks the next page button
                 '''
@@ -124,13 +123,13 @@ class Scraper:
                 next.click()
                 time.sleep(2)
 
-        def __go_back_to_page_1__(self):
+        def __go_back_to_page_1(self):
                 '''
                 Finds the previous page button and clicks it 
                 '''
-                previous = self.driver.find_element(By.LINK_TEXT,"Previous")
+                previous_page_button = self.driver.find_element(By.LINK_TEXT,"Previous")
                 time.sleep(4)
-                previous.click()
+                previous_page_button.click()
                 time.sleep(4) 
 
         def extract_text(self):
@@ -163,14 +162,10 @@ class Scraper:
                         num_reviews = gear_container.find_element(By.XPATH, './/a[@class="text-m"]').text
                         ID = uuid.uuid4()
                         strID = str(ID)
-                        print(strID)
-                        time.sleep(1)
                 except:
                         num_reviews = "NaN"
                         ID = uuid.uuid4()
                         strID = str(ID)
-                        print(strID)
-                        time.sleep(1) 
                 return name, price, description, size, num_reviews, strID 
                 
         def extract_image(self):
@@ -230,7 +225,7 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
-        def __save_dictionary_locally__(self,dict_products,strID,name):
+        def __save_dictionary_locally(self,dict_products,strID,name):
                 '''
                 Creates a new folder for each product, converts the dictionary to json and stores it in the folder
                 
@@ -254,7 +249,7 @@ class Scraper:
                 jsonFile.write(jsonString)
                 jsonFile.close()
 
-        def __download_image__(self,strID,final_image_link,name):
+        def __download_image(self,strID,final_image_link,name):
                 '''
                 Creates a new folder within the individual product folder called 'Images' and downloads the image there
                 
@@ -277,7 +272,7 @@ class Scraper:
                                 #downloads image in new 'Images' folder
                                 f.write(requests.get(final_image_link).content)
 
-        def enter_links(self):
+        def extract_product_info(self):
                 '''
                 Iterates through the gear_link_list and collects and saves the data for each product
 
@@ -289,46 +284,40 @@ class Scraper:
                        list of product links filled by scraper
                 '''
                 for link in self.gear_link_list:
-                        time.sleep(3)
                         self.driver.get(link)
                         time.sleep(5)
                         name, price, description, size, num_reviews, strID = self.extract_text()
                         final_image_link = self.extract_image()
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
-                        self.save_dictionary_locally(dict_products, strID,name)
-                        self.download_image(strID,final_image_link,name)
-                        time.sleep(1)
+                        self.__save_dictionary_locally(dict_products, strID,name)
+                        self.__download_image(strID,final_image_link,name)
         
         def remove_obselete_link(self):
                 '''
                 Removes a product link which has very few details and so is not useful
                 '''
                 self.gear_link_list.remove('https://gorillamind.com/collections/all/products/gorilla-mode-energy-sample')
-
-        def visit_individual_link(self):
-                self.driver.get("https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
-                time.sleep(1)
         
-        def main(self):
+        def __main(self):
                 '''
                 Main function which calls all the other functions ordered correctly
                 '''
-                self.__get_website__()
-                self.__go_to_all_products_link__()
-                self.__close_modal__()
+                self.__get_website()
+                self.__go_to_all_products_link()
+                self.__close_modal()
                 self.extract_links()
-                self.__go_to_next_page__()
+                self.__go_to_next_page()
                 self.extract_links()
-                self.__go_back_to_page_1__()
+                self.__go_back_to_page_1()
                 self.remove_obselete_link()
-                self.enter_links()
+                self.extract_product_info()
             
             
 
 
 def go_function():
     go = Scraper()
-    go.main()
+    go.__main()
     pass
 
 if __name__=="__main__":
