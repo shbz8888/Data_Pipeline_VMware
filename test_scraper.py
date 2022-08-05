@@ -18,9 +18,9 @@ class ScraperTestCase(unittest.TestCase):
     
     Scraper.__init__(unittest.TestCase)
 
-    Scraper.visit_individual_link(unittest.TestCase)
+    Scraper.visit_individual_link(unittest.TestCase, "https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
     time.sleep(10)
-    Scraper.__close_modal__(unittest.TestCase)
+    Scraper.close_modal(unittest.TestCase)
 
     
     def test_extract_text(self):
