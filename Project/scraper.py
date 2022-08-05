@@ -79,7 +79,7 @@ class Scraper:
                 all_products.click()
                 time.sleep(7)
 
-        def __close_modal(self):
+        def close_modal(self):
                 '''
                 Finds the cross off button on the sign up window and clicks it
                 '''
@@ -87,7 +87,8 @@ class Scraper:
                         modal = self.driver.find_element(By.XPATH,'//button[@class="sc-75msgg-0 RlRPc close-button cw-close"]')
                         print(modal)
                         modal.click()
-                        print('Button clicked')   
+                        print('Button clicked') 
+                        time.sleep(1)  
                 except:
                         print('No button found...exiting')
                         self.driver.quit() 
@@ -297,6 +298,15 @@ class Scraper:
                 Removes a product link which has very few details and so is not useful
                 '''
                 self.gear_link_list.remove('https://gorillamind.com/collections/all/products/gorilla-mode-energy-sample')
+
+        def visit_individual_link(self, URL):
+                '''
+                Opens a google chrome window and visits the website Gorilla Mind
+                '''
+               
+                self.driver.get(URL)
+                time.sleep(1)
+
         
         def __main(self):
                 '''
