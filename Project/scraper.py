@@ -321,7 +321,7 @@ class Scraper:
 
         @staticmethod
         def data_saving_update():
-                return 'finished saving all dictionaries and images locally'
+                print('finished saving all dictionaries and images locally')
         
         def remove_obselete_link(self):
                 '''
