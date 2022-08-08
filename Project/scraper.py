@@ -1,5 +1,6 @@
 
 from os import link
+import boto3
 import selenium
 import time
 import uuid
@@ -11,6 +12,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+s3_client = boto3.client('s3')
+s3 = boto3.resource('s3')
 class Scraper:
         '''
         A scraper that extracts the product data from the website Gorilla Mind
@@ -47,6 +50,8 @@ class Scraper:
                 made to make testing easier, called during unit testing.
         __main()
                 calls all of the above methods in order.
+        __save_to_S3_bucket()
+                saves images and data dictionaries to AWS S3 bucket
         '''
         def __init__(self):
                 '''
@@ -70,7 +75,7 @@ class Scraper:
                 '''
                 URL = "https://gorillamind.com/"
                 self.driver.get(URL)
-                time.sleep(1)
+                time.sleep(2)
 
         def __go_to_all_products_link(self):
                 '''
@@ -79,7 +84,7 @@ class Scraper:
                 all_products = self.driver.find_element(By.LINK_TEXT,"All Products")
                 time.sleep(1)
                 all_products.click()
-                time.sleep(7)
+                time.sleep(10)
 
         def close_modal(self):
                 '''
@@ -194,7 +199,7 @@ class Scraper:
                         time.sleep(1)
                 except:
                         final_image_link = 'none'
-                return final_image_link, final_image
+                return final_image_link
 
         def create_dict(self, name, price, description, size, num_reviews, strID, final_image_link ):
                 '''
@@ -228,6 +233,7 @@ class Scraper:
                 dict_products['UUID'].append(strID)
                 return dict_products
                
+        
         def __save_dictionary_locally(self,dict_products,strID,name):
                 '''
                 Creates a new folder for each product, converts the dictionary to json and stores it in the folder
@@ -241,16 +247,32 @@ class Scraper:
                 name: str
                         name of a product
                 '''
-                path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
+                path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data"
                 os.chdir(path)
                 os.makedirs(f'{name}')
-                path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{name}")
+                path2 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}")
                 os.chdir(path2)
                 jsonString = json.dumps(dict_products)
                 jsonFile = open("data.json", "w")
                 #creates new folder for product in the 'raw_data' folder
                 jsonFile.write(jsonString)
                 jsonFile.close()
+        
+
+        def __save_to_S3_bucket(self,name,strID):
+                '''
+                Saves files to an amazon webservices S3 bucket
+
+                Parameters:
+                ----------
+                name: str
+                        name of a product
+                strID: str
+                        UUID for a product converted to a string
+                '''
+                s3.meta.client.upload_file(f'/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/data.json','gorilla-mind-bucket', f'{name}.json')
+                s3.meta.client.upload_file(f'/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/Images/{strID}_1.png','gorilla-mind-bucket', f'{name}_image.png')
+
 
         def __download_image(self,strID,final_image_link,name):
                 '''
@@ -269,7 +291,7 @@ class Scraper:
                         pass
                 else:
                         os.makedirs('Images')
-                        path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data/{name}/Images")
+                        path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/Images")
                         os.chdir(path3)
                         with open(f'{strID}_1.png', 'wb') as f:
                                 #downloads image in new 'Images' folder
@@ -294,12 +316,19 @@ class Scraper:
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                         self.__save_dictionary_locally(dict_products, strID,name)
                         self.__download_image(strID,final_image_link,name)
+                        self.__save_to_S3_bucket(self,name,strID)
+                Scraper.data_saving_update()
+
+        @staticmethod
+        def data_saving_update():
+                return 'finished saving all dictionaries and images locally'
         
         def remove_obselete_link(self):
                 '''
                 Removes a product link which has very few details and so is not useful
                 '''
                 self.gear_link_list.remove('https://gorillamind.com/collections/all/products/gorilla-mode-energy-sample')
+
 
         def visit_individual_link(self, URL):
                 '''
@@ -310,7 +339,7 @@ class Scraper:
                 time.sleep(1)
 
         
-        def __main(self):
+        def main(self):
                 '''
                 Main function which calls all the other functions ordered correctly
                 '''
@@ -329,7 +358,7 @@ class Scraper:
 
 def go_function():
     go = Scraper()
-    go.__main()
+    go.main()
     pass
 
 if __name__=="__main__":
