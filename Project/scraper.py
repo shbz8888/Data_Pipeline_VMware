@@ -7,6 +7,9 @@ import uuid
 import json
 import os
 import requests
+import pandas as pd
+import sqlalchemy
+from sqlalchemy import create_engine
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -67,6 +70,7 @@ class Scraper:
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
+                self.list = []
                  
 
         def __get_website(self):
@@ -273,6 +277,24 @@ class Scraper:
                 s3.meta.client.upload_file(f'/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/data.json','gorilla-mind-bucket', f'{name}.json')
                 s3.meta.client.upload_file(f'/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/Images/{strID}_1.png','gorilla-mind-bucket', f'{name}_image.png')
 
+        def append_dict(self,dict_products):
+                self.list.append(dict_products)
+
+        def convert_to_pd_dataframe(self):
+                df = pd.DataFrame (self.list, columns = ['name', 'price', 'description', 'size', 'num_reviews', 'ID', 'final image link'])
+
+        def upload_item_data_to_rds(self, dict_products): 
+                """Upload one item data to AWS RDS.
+
+                Args:
+                item_dict (dict): The dictionary to be uploaded to AWS RDS.
+
+                Returns:
+                int: Number of rows affected by to_sql
+                """
+                df = pd.DataFrame.from_dict(dict_products)
+        
+        
 
         def __download_image(self,strID,final_image_link,name):
                 '''
@@ -314,9 +336,11 @@ class Scraper:
                         name, price, description, size, num_reviews, strID = self.extract_text()
                         final_image_link = self.extract_image()
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
+                        self.append_dict(dict_products)
                         self.__save_dictionary_locally(dict_products, strID,name)
                         self.__download_image(strID,final_image_link,name)
                         self.__save_to_S3_bucket(name,strID)
+                self.convert_to_pd_dataframe()
                 Scraper.data_saving_update()
 
         @staticmethod
