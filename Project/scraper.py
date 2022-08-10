@@ -316,12 +316,12 @@ class Scraper:
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                         self.__save_dictionary_locally(dict_products, strID,name)
                         self.__download_image(strID,final_image_link,name)
-                        self.__save_to_S3_bucket(self,name,strID)
+                        self.__save_to_S3_bucket(name,strID)
                 Scraper.data_saving_update()
 
         @staticmethod
         def data_saving_update():
-                print('finished saving all dictionaries and images locally')
+                print('finished saving all dictionaries and images')
         
         def remove_obselete_link(self):
                 '''
