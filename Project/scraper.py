@@ -10,6 +10,8 @@ import requests
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import create_engine
+from sqlalchemy import inspect 
+from sqlalchemy import to_sql 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -175,7 +177,7 @@ class Scraper:
                         ID = uuid.uuid4()
                         strID = str(ID)
                 except:
-                        num_reviews = "NaN"
+                        num_reviews = "0 Reviews"
                         ID = uuid.uuid4()
                         strID = str(ID)
                 return name, price, description, size, num_reviews, strID 
@@ -281,18 +283,16 @@ class Scraper:
                 self.list.append(dict_products)
 
         def convert_to_pd_dataframe(self):
-                df = pd.DataFrame (self.list, columns = ['name', 'price', 'description', 'size', 'num_reviews', 'ID', 'final image link'])
+                df = pd.DataFrame (self.list, columns = ['name', 'price ($)', 'description', 'size', 'number of reviews', 'ID', 'final image link'])
+                df['price'] = df['price'].str.strip('$')
+                df['price'] = df['price'].astype('float64')
+                df['num_reviews'] = df['num_reviews'].str.strip('Reviews')
+                df['num_reviews'] = df['num_reviews'].astype('int64')
+                return df
 
-        def upload_item_data_to_rds(self, dict_products): 
-                """Upload one item data to AWS RDS.
-
-                Args:
-                item_dict (dict): The dictionary to be uploaded to AWS RDS.
-
-                Returns:
-                int: Number of rows affected by to_sql
-                """
-                df = pd.DataFrame.from_dict(dict_products)
+        def upload_item_data_to_rds(self, df): 
+                engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
+                df.to_sql('Products',engine,if_exists='append')
         
         
 
@@ -337,10 +337,11 @@ class Scraper:
                         final_image_link = self.extract_image()
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                         self.append_dict(dict_products)
-                        self.__save_dictionary_locally(dict_products, strID,name)
-                        self.__download_image(strID,final_image_link,name)
-                        self.__save_to_S3_bucket(name,strID)
-                self.convert_to_pd_dataframe()
+                        #self.__save_dictionary_locally(dict_products, strID,name)
+                        #self.__download_image(strID,final_image_link,name)
+                        #self.__save_to_S3_bucket(name,strID)
+                df = self.convert_to_pd_dataframe()
+                self.upload_item_data_to_rds(df)
                 Scraper.data_saving_update()
 
         @staticmethod
