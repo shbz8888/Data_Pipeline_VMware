@@ -11,7 +11,6 @@ import pandas as pd
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy import inspect 
-from sqlalchemy import to_sql 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -170,6 +169,8 @@ class Scraper:
                 gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
                 name = gear_container.find_element(By.XPATH, './/h1[@class="product_name title"]').text
                 price = gear_container.find_element(By.XPATH, './/span[@class="money"]').text
+                if price == '':
+                        price = '$0.00'
                 description= gear_container.find_element(By.XPATH, './/div[@class="description content"]').text
                 size = gear_container.find_element(By.XPATH, './/span[@class="variant-size"]').text
                 try:
@@ -229,14 +230,14 @@ class Scraper:
                         link for the product's image 
 
                 '''
-                dict_products = {'Name': [], 'Price': [], 'Description': [], 'Size': [], 'Num_reviews': [], 'UUID': [], 'Image': []}
-                dict_products['Name'].append(name)
-                dict_products['Image'].append(final_image_link)
-                dict_products['Price'].append(price)
-                dict_products['Description'].append(description)
-                dict_products['Size'].append(size)
-                dict_products['Num_reviews'].append(num_reviews)
-                dict_products['UUID'].append(strID)
+                dict_products = {}
+                dict_products['Name'] = name
+                dict_products['Price ($)'] = price
+                dict_products['Description'] = description
+                dict_products['Size'] = size
+                dict_products['Number of reviews'] = num_reviews
+                dict_products['UUID'] = strID
+                dict_products['Image'] = final_image_link
                 return dict_products
                
         
@@ -283,11 +284,11 @@ class Scraper:
                 self.list.append(dict_products)
 
         def convert_to_pd_dataframe(self):
-                df = pd.DataFrame (self.list, columns = ['name', 'price ($)', 'description', 'size', 'number of reviews', 'ID', 'final image link'])
-                df['price'] = df['price'].str.strip('$')
-                df['price'] = df['price'].astype('float64')
-                df['num_reviews'] = df['num_reviews'].str.strip('Reviews')
-                df['num_reviews'] = df['num_reviews'].astype('int64')
+                df = pd.DataFrame (self.list,dtype=str)
+                df['Price ($)'] = df['Price ($)'].str.strip('$')
+                df['Price ($)'] = df['Price ($)'].astype('float64')
+                df['Number of reviews'] = df['Number of reviews'].str.strip('Reviews')
+                df['Number of reviews'] = df['Number of reviews'].astype('int64')
                 return df
 
         def upload_item_data_to_rds(self, df): 
