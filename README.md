@@ -143,7 +143,7 @@ Milestone 4:
 Milestone 5:
 * An S3 bucket was created using Amazon Web Services (AWS) and all raw data (dictionairies and image data) were uploaded to it using boto3
 * An AWS Relational Database (RDS) was also created, a pgadmin4 database was created and connected to the RDS
-* The data collected from the webpage was converted to a database and cleaned using pandas
+* The data collected from the webpage was converted to a database and cleaned using pandas:
 ```python 
 def convert_to_pd_dataframe(self):
                 df = pd.DataFrame (self.list,dtype=str)
@@ -155,14 +155,14 @@ def convert_to_pd_dataframe(self):
 ```
 * The Price data was first stripped of any characters ($) and then converted to a float data type, this to allow  arithmetic calculations in pgadmin4, this was alos done to the 'Number of reviews' data
 * The data was converted to an SQL database via sqlalchemy and psycopg2
-* Using the aforemnetioned tools an engine was created that connected to the pgadmin4 by extension RDS database
+* Using the aforemnetioned tools an engine was created that connected to the pgadmin4 by extension RDS database:
 ```python
 def upload_item_data_to_rds(self, df): 
                 engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
                 df.to_sql('Products',engine,if_exists='append')
 ```
 * The 'if_exists' attrcibute was set to 'append' incase so that values can update if they change in the future
-* A method was created to notify the user that the scraper had finished saving all the data, due to the lack of shared parameters/attributes it was converted to a decorator
+* A method was created to notify the user that the scraper had finished saving all the data, due to the lack of shared parameters/attributes it was converted to a decorator:
 ```python
 @staticmethod
 def data_saving_update():
