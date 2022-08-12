@@ -168,6 +168,6 @@ def upload_item_data_to_rds(self, df):
 def data_saving_update():
         print('finished saving all dictionaries and images')
 ```
-* This was called after the data had been uploaded to the RDS, S3 bucket and saved locally
+* This was called after the data had been uploaded to the RDS, S3 bucket and saved locally:
 
 ![alt text](Images/Screenshot_4.png)
