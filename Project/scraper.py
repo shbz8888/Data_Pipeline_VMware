@@ -125,7 +125,8 @@ class Scraper:
                 print(self.gear_link_list)
                 print(f' there are {len(self.gear_link_list)} products in this list')
                 time.sleep(1)
-                return 
+                length = len(self.gear_link_list)
+                return length
        
         def __go_to_next_page(self):
                 '''
@@ -293,7 +294,7 @@ class Scraper:
 
         def upload_item_data_to_rds(self, df): 
                 engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
-                df.to_sql('Products',engine,if_exists='append')
+                df.to_sql('Products',engine,if_exists='replace')
         
         
 
@@ -320,7 +321,7 @@ class Scraper:
                                 #downloads image in new 'Images' folder
                                 f.write(requests.get(final_image_link).content)
 
-        def extract_product_info(self):
+        def extract_product_info(self,length):
                 '''
                 Iterates through the gear_link_list and collects and saves the data for each product
 
@@ -331,16 +332,20 @@ class Scraper:
                 gear_link_list: list
                        list of product links filled by scraper
                 '''
-                for link in self.gear_link_list:
+                for index,link in enumerate(self.gear_link_list):
                         self.driver.get(link)
                         time.sleep(5)
                         name, price, description, size, num_reviews, strID = self.extract_text()
                         final_image_link = self.extract_image()
                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                         self.append_dict(dict_products)
-                        #self.__save_dictionary_locally(dict_products, strID,name)
-                        #self.__download_image(strID,final_image_link,name)
-                        #self.__save_to_S3_bucket(name,strID)
+                        try:
+                                self.__save_dictionary_locally(dict_products, strID,name)
+                                self.__download_image(strID,final_image_link,name)
+                                self.__save_to_S3_bucket(name,strID)
+                        except FileExistsError:
+                                print(f'files for {name} already exists')
+                        print(f'{index+1} out of {length} products complete')
                 df = self.convert_to_pd_dataframe()
                 self.upload_item_data_to_rds(df)
                 Scraper.data_saving_update()
@@ -372,12 +377,12 @@ class Scraper:
                 self.__get_website()
                 self.__go_to_all_products_link()
                 self.close_modal()
-                self.extract_links()
+                length = self.extract_links()
                 self.__go_to_next_page()
                 self.extract_links()
                 self.__go_back_to_page_1()
                 self.remove_obselete_link()
-                self.extract_product_info()
+                self.extract_product_info(length)
             
             
 
