@@ -17,31 +17,44 @@ from selenium.webdriver.support import expected_conditions as EC
 class ScraperTestCase(unittest.TestCase):
 
     
-    Scraper.__init__(unittest.TestCase)
+    def setUp(self):
+        self.panda_obj = Scraper()
 
-    Scraper.visit_individual_link(unittest.TestCase, "https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
-    time.sleep(10)
-    Scraper.close_modal(unittest.TestCase)
-
+    def tearDown(self) -> None:
+        self.panda_obj
+        return super().tearDown()
     
     def test_extract_text(self):
-        name, price, description, size, num_reviews, strID = Scraper.extract_text(unittest.TestCase) 
+        self.panda_obj.__init__
+        self.panda_obj.visit_individual_link("https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
+        time.sleep(10)
+        self.panda_obj.close_modal()
+        name, price, description, size, num_reviews, strID = self.panda_obj.extract_text() 
         self.assertEqual(price,"$0.00")
         self.assertEqual(num_reviews,"0 Reviews")
         self.assertEqual(len(strID),36)
         return  name, price, description, size, num_reviews, strID 
 
     def test_extract_image(self):
-        final_image_link = Scraper.extract_image(unittest.TestCase)  
+        self.panda_obj.__init__
+        self.panda_obj.visit_individual_link("https://gorillamind.com/collections/all/products/gorilla-dream-to-go")
+        time.sleep(10)
+        self.panda_obj.close_modal()
+        final_image_link = self.panda_obj.extract_image()  
         self.assertTrue(type(final_image_link) is str)
         
         return final_image_link
 
     def test_create_dict(self):
         print('test_dict')
-        name, price, description, size, num_reviews, strID = Scraper.extract_text(unittest.TestCase) 
-        final_image_link = Scraper.extract_image(unittest.TestCase)  
-        dict_products = Scraper.create_dict(unittest.TestCase, name, price, description, size, num_reviews, strID, final_image_link)
+        name = "GORILLA MODE"
+        price = "$49.99"
+        description = "Porduct description"
+        size = "40 servings"
+        num_reviews = "0 Reviews"
+        strID = "c4c63eb3e331ab32678baea2da2b2db5"
+        final_image_link = "https://cdn.shopify.com/s/files/1/0369/2580/0493/products/Gorilla-Mode-Bombsicle_600x.png?v=1660581253"
+        dict_products = self.panda_obj.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
         self.assertEqual(num_reviews,"0 Reviews")
         self.assertEqual(dict_products['Name'],name)
         self.assertEqual(dict_products['Price ($)'],price)
@@ -55,18 +68,17 @@ class ScraperTestCase(unittest.TestCase):
 
     
     def test_save_options(self):
-        option ='1'
-        self.assertEqual(Scraper.save_options(option),"thanks")
-        option ='2'
-        self.assertEqual(Scraper.save_options(option),"thanks")
-        option ='3'
-        self.assertEqual(Scraper.save_options(option),"thanks")
-        option = '4'
-        self.assertEqual(Scraper.save_options(option),"try again")
+        first_option ='1'
+        second_option ='2'
+        third_option ='3'
+        self.assertEqual(self.panda_obj.save_options(first_option),'1')
+        self.assertEqual(self.panda_obj.save_options(second_option),'2')
+        self.assertEqual(self.panda_obj.save_options(third_option),'3')
 
     def test_check_RDS(self):
-        name = 'fake name'
-        self.assertEqual(Scraper.check_RDS(name),[])
+        names = 'fake name'
+        self.assertEqual(Scraper.check_RDS(names),[])
+        
         
 
     
