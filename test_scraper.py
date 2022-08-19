@@ -19,10 +19,11 @@ class ScraperTestCase(unittest.TestCase):
     
     def setUp(self):
         self.panda_obj = Scraper()
-
+    
     def tearDown(self) -> None:
-        self.panda_obj
-        return super().tearDown()
+        self.panda_obj.driver.quit()
+        del self.panda_obj
+        
     
     def test_extract_text(self):
         self.panda_obj.__init__
