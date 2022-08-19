@@ -1,21 +1,21 @@
-
-from os import link
 import boto3
 import selenium
 import time
-import uuid
 import json
 import os
-import requests
 import pandas as pd
+import requests
 import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy import inspect 
+import uuid
+from os import link
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
+from sqlalchemy import create_engine
+from sqlalchemy import inspect 
 s3_client = boto3.client('s3')
 s3 = boto3.resource('s3')
 engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
@@ -25,42 +25,60 @@ class Scraper:
 
         Methods:
         -------
+        __init__
+                Initialiser
         __get_website()
-                opens the website in google chrome.
+                Opens the website in google chrome.
         __go_to_all_products_link()
-                navigates to the all products section.
-        __close_modal()
+                Navigates to the all products section.
+        close_modal()
                 Closes the sign up pop up window.
         __extract_links()
-                begins extracting and storing the links for each individual product in the gear_link_list.
+                Begins extracting and storing the links for each individual product in the gear_link_list.
+        ask_options()
+                Asks the user whether they want to save files locally, to RDS or both
+        save_options()
+                Evaluates whether the input from ask_options() is valid
+        __prevent_rescraping()
+                Checks local directory to see if files of the product are already saved
         __go_to_next_page()
-                navigates to the next page.
+                Navigates to the next page.
         __go_back_to_page_1()
-                navigates to page 1.
+                Navigates to page 1.
         extract_text()
-                extracts the name, price, description, size, number of reviews, and generates a unique ID.
+                Extracts the name, price, description, size, number of reviews, and generates a unique ID.
         extract_image()
-                extracts the image link for the product.
+                Extracts the image link for the product.
         create_dict()
-                stores all of the extacted text and image link in a dictionary.
+                Stores all of the extacted text and image link in a dictionary.
         __save_dictionary_locally()
-                creates a folder for the product and stores the dictionary inside.
-        __download_image()
-                creates an images folder within the product folder and downloads the image there.
-        __extract_product_info()
-                visits each link within the gear_link_list and extracts the text and image data by calling the above methods.
-        __remove_obselete_link()
-                remove 1 link from the gear_link_list which has a product without much data.
-        visit_individual_link()
-                made to make testing easier, called during unit testing.
-        __main()
-                calls all of the above methods in order.
+                Creates a folder for the product and stores the dictionary inside.
         __save_to_S3_bucket()
-                saves images and data dictionaries to AWS S3 bucket
+                Saves images and data dictionaries to AWS S3 bucket
+        __append_dict()
+                Appends dictionary to a list to upload to RDS 
+        __convert_to_pd_dataframe()
+                Converts the list of dictionaries to a pandas dataframe and performs data cleaning
+        __upload_item_data_to_rds()
+                Uploads dataframe to RDS        
+        check_RDS()
+                Checks the RDS for existing files
+        __download_image()
+                Creates an images folder within the product folder and downloads the image there.
+        __extract_product_info()
+                Visits each link within the gear_link_list and extracts the text and image data by calling the above methods.
+        data_saving_update()
+                Gives an update on the progress of the scraper
+        __remove_obselete_link()
+                Remove 1 link from the gear_link_list which has a product without much data.
+        visit_individual_link()
+                Made to make testing easier, called during unit testing.
+        __main()
+                Calls all of the above methods in order.
         '''
         def __init__(self):
                 '''
-                initialiser
+                Initialiser
 
                 Attributes:
                 ----------
@@ -68,16 +86,22 @@ class Scraper:
                         Empty list of product links to be filled by scraper
                 driver: N/A (import)
                         module used to open and control google chrome for data scraping
+                list: list
+                        list dictionairies will be appended to in order to upload to RDS
                 '''
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
                 self.driver = webdriver.Chrome()
                 self.list = []
-                 
 
         def __get_website(self):
                 '''
                 Opens a google chrome window and visits the website Gorilla Mind
+
+                Variables:
+                ----------
+                URL: string
+                        website to be visited
                 '''
                 URL = "https://gorillamind.com/"
                 self.driver.get(URL)
@@ -106,7 +130,7 @@ class Scraper:
                         print('No button found...exiting')
                         self.driver.quit() 
 
-        def extract_links(self):
+        def __extract_links(self):
                 '''
                 Finds the links to each product one by one and appends them to gear_link_list
 
@@ -131,19 +155,26 @@ class Scraper:
 
         @staticmethod
         def ask_options():
-                option = input('Enter 1 for save locally, 2 for save to RDS or 3 for both:  ')
-                return option
+                '''
+                Asks the user whether they want to save files locally, to RDS or both
+                '''
+                input_option = input('Enter 1 for save locally, 2 for save to RDS or 3 for both:  ')
+                return input_option
 
         @staticmethod
         def save_options(option):
-                if option == '1' or option == '2' or option == '3':
-                        print('thanks')
-                else:
-                        print('try again')
-                        Scraper.ask_options()
+                '''
+                Evaluates whether the input from ask_options() is valid
+                '''
+                while option not in ['1','2','3']:
+                        option = Scraper.ask_options()
+                return option
 
         @staticmethod
         def __prevent_rescraping(name):
+                '''
+                Checks local directory to see if files of the product are already saved
+                '''
                 filepath = './raw_data'
                 dir_content = os.listdir(filepath)
                 for product in dir_content:
@@ -309,9 +340,20 @@ class Scraper:
                 s3.meta.client.upload_file(f'/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/Images/{strID}_1.png','gorilla-mind-bucket', f'{name}_image.png')
 
         def __append_dict(self,dict_products):
+                '''
+                Appends dictionary to a list to upload to RDS, this was done because files are uploaded all at once (batch processing)
+                '''
                 self.list.append(dict_products)
 
         def __convert_to_pd_dataframe(self):
+                '''
+                Converts the list of dictionaries to a pandas dataframe and performs data cleaning so that Price and 'Number of reviews' can be manipulated in pgadmin4
+                
+                Variables:
+                ---------
+                df: Pandas dataframe
+                        Dataframe of the appended dictionairies
+                '''
                 df = pd.DataFrame (self.list, columns=['Name', 'Price ($)', 'Description', 'Size', 'Number of reviews', 'UUID', 'Image'],dtype=str)
                 df['Price ($)'] = df['Price ($)'].str.strip('$')
                 df['Price ($)'] = df['Price ($)'].astype('float64')
@@ -320,10 +362,16 @@ class Scraper:
                 return df
 
         def __upload_item_data_to_rds(self, df): 
+                '''
+                Uploads dataframe to RDS 
+                '''
                 df.to_sql('Products',engine,if_exists='append')
                 
 
         def check_RDS(name):
+                '''
+                Checks the RDS for existing files
+                '''
                 conn = engine.connect()
                 output = conn.execute(f'''SELECT * FROM "Products" 
                                         WHERE "Name" = '{name}' ''')
@@ -367,9 +415,9 @@ class Scraper:
                 gear_link_list: list
                        list of product links filled by scraper
                 '''
-                option = Scraper.ask_options()
-                Scraper.save_options(option)
-                if option == "1": #local
+                resulting_option = Scraper.ask_options()
+                Scraper.save_options(resulting_option)
+                if resulting_option == '1': #local
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
@@ -387,7 +435,7 @@ class Scraper:
                                         print(f'{index+1} out of {length} products complete')
                                         pass
                         Scraper.data_saving_update()
-                if option == "2": #RDS
+                if resulting_option == '2': #RDS
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
@@ -406,7 +454,7 @@ class Scraper:
                         df = self.__convert_to_pd_dataframe()
                         self.__upload_item_data_to_rds(df)
                         Scraper.data_saving_update()
-                if option == "3": #both
+                if resulting_option == '3': #both
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
@@ -427,6 +475,8 @@ class Scraper:
                         df = self.__convert_to_pd_dataframe()
                         self.__upload_item_data_to_rds(df)
                         Scraper.data_saving_update()
+        
+        @staticmethod
         def data_saving_update():
                 print('finished saving all new dictionaries and images')
         
@@ -453,9 +503,9 @@ class Scraper:
                 self.__get_website()
                 self.__go_to_all_products_link()
                 self.close_modal()
-                length = self.extract_links()
+                length = self.__extract_links()
                 self.__go_to_next_page()
-                self.extract_links()
+                self.__extract_links()
                 self.__go_back_to_page_1()
                 self.remove_obselete_link()
                 self.extract_product_info(length)
