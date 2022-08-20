@@ -77,10 +77,10 @@ class ScraperTestCase(unittest.TestCase):
         self.assertEqual(self.panda_obj.save_options(third_option),'3')
 
     def test_check_RDS(self):
-        names = 'fake name'
-        self.assertEqual(Scraper.check_RDS(names),[])
-        
-        
+        first_names = 'GORILLA MODE'
+        second_names = 'fake name'
+        self.assertEqual(Scraper.check_RDS(first_names),[(0, 'GORILLA MODE', 49.99, '• Intense Focus + Drive*\n• Huge Nitric Oxide Pump*\n• Increased Endurance + Power*', '40 Servings', 0, '46b550bf-ef76-4e64-b39b-2cffd3ac5333', 'https://cdn.shopify.com/s/files/1/0369/2580/0493/products/Gorilla-Mode-Mango-Peach_5000x.png?v=1659977601')])
+        self.assertEqual(Scraper.check_RDS(second_names),[])
 
     
         
