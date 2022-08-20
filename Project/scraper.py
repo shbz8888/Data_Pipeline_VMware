@@ -14,6 +14,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+s = Service('/usr/bin/chromedriver')
 from sqlalchemy import create_engine
 from sqlalchemy import inspect 
 s3_client = boto3.client('s3')
@@ -168,7 +170,8 @@ class Scraper:
                 '''
                 while option not in ['1','2','3']:
                         option = Scraper.ask_options()
-                return option
+                else:
+                        return option
 
         @staticmethod
         def __prevent_rescraping(name):
@@ -416,8 +419,8 @@ class Scraper:
                        list of product links filled by scraper
                 '''
                 resulting_option = Scraper.ask_options()
-                Scraper.save_options(resulting_option)
-                if resulting_option == '1': #local
+                final_option = Scraper.save_options(resulting_option)
+                if final_option == '1': #local
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
@@ -435,7 +438,7 @@ class Scraper:
                                         print(f'{index+1} out of {length} products complete')
                                         pass
                         Scraper.data_saving_update()
-                if resulting_option == '2': #RDS
+                if final_option == '2': #RDS
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
@@ -454,7 +457,7 @@ class Scraper:
                         df = self.__convert_to_pd_dataframe()
                         self.__upload_item_data_to_rds(df)
                         Scraper.data_saving_update()
-                if resulting_option == '3': #both
+                if final_option == '3': #both
                         for index,link in enumerate(self.gear_link_list):
                                 self.driver.get(link)
                                 time.sleep(5)
