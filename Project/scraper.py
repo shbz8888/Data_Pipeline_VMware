@@ -95,13 +95,13 @@ class Scraper:
                 '''
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
-                s = Service('/usr/bin/chromedriver')
                 options = Options()
                 options.add_argument('--window-size=1920,1080')
                 options.add_argument('--headless')
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
-                self.driver = webdriver.Chrome(service=s,options=options)
+                self.driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager().install()), options=options)  #
                 self.list = []
 
         def __get_website(self):
