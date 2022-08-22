@@ -15,6 +15,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException
+from webdriver_manager.chrome import ChromeDriverManager
 s = Service('/usr/bin/chromedriver')
 from sqlalchemy import create_engine
 from sqlalchemy import inspect 
@@ -93,7 +95,13 @@ class Scraper:
                 '''
                 #constants go within the function and variables go inside the brackets above
                 self.gear_link_list = []
-                self.driver = webdriver.Chrome()
+                s = Service('/usr/bin/chromedriver')
+                options = Options()
+                options.add_argument('--window-size=1920,1080')
+                options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                self.driver = webdriver.Chrome(service=s,options=options)
                 self.list = []
 
         def __get_website(self):
@@ -105,8 +113,7 @@ class Scraper:
                 URL: string
                         website to be visited
                 '''
-                URL = "https://gorillamind.com/"
-                self.driver.get(URL)
+                self.driver.get("https://gorillamind.com/")
                 time.sleep(2)
 
         def __go_to_all_products_link(self):
@@ -130,7 +137,7 @@ class Scraper:
                         time.sleep(1)  
                 except:
                         print('No button found...exiting')
-                        self.driver.quit() 
+                        #self.driver.quit() 
 
         def __extract_links(self):
                 '''
@@ -197,7 +204,7 @@ class Scraper:
                 next = self.driver.find_element(By.LINK_TEXT,"Next")
                 next.click()
                 time.sleep(2)
-
+                
         def __go_back_to_page_1(self):
                 '''
                 Finds the previous page button and clicks it 
