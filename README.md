@@ -189,7 +189,16 @@ def check_RDS(name):
 * A similar method was created that checked the local directory, both of these returned values that determined whether the information from those products would be scraped
 * An option was provided to the user asking whether they wanted to save locally, upload to the RDS or both
 * More unittests were created to test the check_RDS method
-* The scraper was changed so that it would run in headless mode by adding options to the webdriver
+* The scraper was changed so that it would run in headless mode by adding options to the webdriver:
+```python
+        options = Options()
+                options.add_argument('--window-size=1920,1080')
+                options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                self.driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager().install()), options=options) 
+```
 * A docker file was made and a docker image created before being uploaded to dockerhub
 ![alt text](Images/Screenshot_5.png) ![alt text](Images/Screenshot_6.png) 
 * An *EC2 instance* was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
