@@ -171,3 +171,23 @@ def data_saving_update():
 * This was called after the data had been uploaded to the RDS, S3 bucket and saved locally:
 
 ![alt text](Images/Screenshot_4.png)
+
+Milestone 6 & 7:
+* The RDS was checked for product data to prevent rescraping, this was acheived via the method below
+```python
+def check_RDS(name):
+                '''
+                Checks the RDS for existing files
+                '''
+                conn = engine.connect()
+                output = conn.execute(f'''SELECT * FROM "Products" 
+                                        WHERE "Name" = '{name}' ''')
+                conn.close()
+                check = output.fetchall()
+                return check
+```
+* A similar method was created that checked the local directory, both of these returned values that determined whether the information from those products would be scraped
+* An option was provided to the user asking whether they wanted to save locally, upload to the RDS or both
+* More unittests were created to test the check_RDS method
+* A docker file was made and a docker image created before being uploaded to dockerhub
+![alt text](Images/Screenshot_5.png) ![alt text](Images/Screenshot_6.png) 
