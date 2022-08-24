@@ -189,7 +189,9 @@ def check_RDS(name):
 * A similar method was created that checked the local directory, both of these returned values that determined whether the information from those products would be scraped
 * An option was provided to the user asking whether they wanted to save locally, upload to the RDS or both
 * More unittests were created to test the check_RDS method
+* The scraper was changed so that it would run in headless mode by adding options to the webdriver
 * A docker file was made and a docker image created before being uploaded to dockerhub
 ![alt text](Images/Screenshot_5.png) ![alt text](Images/Screenshot_6.png) 
 * An *EC2 instance* was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
 ![alt text](Images/Screenshot_7.png) 
+* The containerisation offered by docker and the use of the AWS EC2 meant that the scraper could be run anywhere on any machine with any OS as the docker image contained all that was necessary (requirements.txt) and further pre-requisites were provided in the docker file
