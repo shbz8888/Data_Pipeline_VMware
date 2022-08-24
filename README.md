@@ -191,3 +191,5 @@ def check_RDS(name):
 * More unittests were created to test the check_RDS method
 * A docker file was made and a docker image created before being uploaded to dockerhub
 ![alt text](Images/Screenshot_5.png) ![alt text](Images/Screenshot_6.png) 
+* An *EC2 instance* was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
+![alt text](Images/Screenshot_7.png) 
