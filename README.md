@@ -191,7 +191,7 @@ def check_RDS(name):
 * More unittests were created to test the check_RDS method
 * The scraper was changed so that it would run in headless mode by adding options to the webdriver:
 ```python
-        options = Options()
+                options = Options()
                 options.add_argument('--window-size=1920,1080')
                 options.add_argument('--headless')
                 options.add_argument('--no-sandbox')
