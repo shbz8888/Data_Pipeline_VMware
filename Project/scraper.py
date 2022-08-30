@@ -167,7 +167,8 @@ class Scraper:
                 '''
                 Asks the user whether they want to save files locally, to RDS or both
                 '''
-                input_option = input('Enter 1 for save locally, 2 for save to RDS or 3 for both:  ')
+                #input_option = input('Enter 1 for save locally (not for EC2), 2 for save to RDS or 3 for both (not for EC2):  ')
+                input_option = '2'
                 return input_option
 
         @staticmethod
@@ -185,17 +186,15 @@ class Scraper:
                 '''
                 Checks local directory to see if files of the product are already saved
                 '''
-                filepath = './raw_data'
+                filepath = '/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data'
                 dir_content = os.listdir(filepath)
-                for product in dir_content:
-                        if name == product:
-                                value = 1
-                                break
-                        else:
-                                value = 0
-                                pass
+                if name not in dir_content:
+                        value = 1
+                        
+                else:
+                        value = 0
                 return value
-       
+
         def __go_to_next_page(self):
                 '''
                 Scrolls to the bottom of the page and clicks the next page button
@@ -323,6 +322,7 @@ class Scraper:
                 name: str
                         name of a product
                 '''
+                
                 path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data"
                 os.chdir(path)
                 os.makedirs(f'{name}')
@@ -407,6 +407,7 @@ class Scraper:
                 if final_image_link == 'none':
                         pass
                 else:
+                        
                         os.makedirs('Images')
                         path3 = (f"/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/Project/raw_data/{name}/Images")
                         os.chdir(path3)
@@ -432,8 +433,8 @@ class Scraper:
                                 self.driver.get(link)
                                 time.sleep(5)
                                 name, price, description, size, num_reviews, strID = self.extract_text()
-                                value = Scraper.__prevent_rescraping(name)
-                                if value == 0:
+                                scraped = Scraper.__prevent_rescraping(name)
+                                if scraped == 1:
                                         final_image_link = self.extract_image()
                                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                                         self.__append_dict(dict_products)
@@ -470,7 +471,7 @@ class Scraper:
                                 time.sleep(5)
                                 name, price, description, size, num_reviews, strID = self.extract_text()
                                 value = Scraper.__prevent_rescraping(name)
-                                if value == 0:
+                                if value == 1:
                                         final_image_link = self.extract_image()
                                         dict_products =  self.create_dict(name, price, description, size, num_reviews, strID, final_image_link)
                                         self.__append_dict(dict_products)
