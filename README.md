@@ -204,3 +204,28 @@ def check_RDS(name):
 * An *EC2 instance* was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
 ![alt text](Images/Screenshot_7.png) 
 * The containerisation offered by docker and the use of the AWS EC2 meant that the scraper could be run anywhere on any machine with any OS as the docker image contained all that was necessary (requirements.txt) and further pre-requisites were provided in the docker file
+
+Milestone 9:
+* Prometheus was installed on the EC2 instance
+* A prometheus.yml file was created for initial configuration, a docker container running prometheus was formed
+```nano
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'codelab-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name added as a label `job=<job_name>` to any timeseries scraped
+  - job_name: 'prometheus'
+    # Override the global default and scrape targets from job every 5 seconds.
+    scrape_interval: '5s'
+    static_configs:
+      - targets: ['localhost:9090']
+```
+* A node exporter was created to monitor the hardware of the EC2
+* two more jobs were added to the prometheus.yml file, 'node' and 'docker' 
+* A daemon.json file was then initialised 
