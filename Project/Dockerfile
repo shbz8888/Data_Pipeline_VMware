@@ -10,6 +10,7 @@ COPY . .
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && pip install psycopg2\
+    && ls\
     pip install -r requirements.txt
 
 CMD ["python3", "scraper.py"]
