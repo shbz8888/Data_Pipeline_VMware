@@ -14,4 +14,3 @@ RUN apt-get update \
     && pip install -r requirements.txt
 
 CMD ["python3", "scraper.py"]
-
