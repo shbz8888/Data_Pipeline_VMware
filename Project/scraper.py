@@ -17,11 +17,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
-s = Service('/usr/bin/chromedriver')
+#s = Service('/usr/bin/chromedriver')
 from sqlalchemy import create_engine
 from sqlalchemy import inspect 
-s3_client = boto3.client('s3')
-s3 = boto3.resource('s3')
+#s3_client = boto3.client('s3')
+#s3 = boto3.resource('s3')
 engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
 class Scraper:
         '''
@@ -512,13 +512,21 @@ class Scraper:
                 Main function which calls all the other functions ordered correctly
                 '''
                 self.__get_website()
+                print('in website')
                 self.__go_to_all_products_link()
+                print('on all products page')
                 self.close_modal()
+                print('closed modal')
                 length = self.__extract_links()
+                print('links extracted 1')
                 self.__go_to_next_page()
+                print('next page entered')
                 self.__extract_links()
+                print('links extracted 2')
                 self.__go_back_to_page_1()
+                print('back at page 1')
                 self.remove_obselete_link()
+                print('link removed')
                 self.extract_product_info(length)
             
             
