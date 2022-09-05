@@ -226,6 +226,7 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 ```
+* A new IP address was added to the EC2 instance's inbound rules so that it's metrics could be tracked
 * A daemon.json file was intialised 
 ```nano
 {
