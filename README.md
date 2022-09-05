@@ -252,6 +252,6 @@ sudo docker run --rm -d \
 * The scraper was then run using the docker image
 * A grafana dashboard was then set up to dispay the metrics of the EC2 instace and prometheus container
 ![alt text](Images/Screenshot_9.png) ![alt text](Images/Screenshot_11.png) 
-* The panel to the right shows some of the hardware activity of the EC2 instance while the escraper is running
+* The panel directly above shows some of the hardware activity of the EC2 instance while the scraper is running
 ![alt text](Images/Screenshot_12.png) 
 * The image above shows the status of the prometheus containers with the red line showing when the container was started
