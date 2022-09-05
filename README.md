@@ -207,7 +207,7 @@ def check_RDS(name):
 
 Milestone 9:
 * Prometheus was installed on the EC2 instance
-* A prometheus.yml file was created for initial configuration, a docker container running prometheus was formed
+* A prometheus.yml file was created and a docker container running prometheus was formed
 ```nano
 global:
   scrape_interval: 15s # By default, scrape targets every 15 seconds.
@@ -226,6 +226,32 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 ```
+* A daemon.json file was intialised 
+```nano
+{
+    "metrics-addr" : "localhost:9323",
+    "experimental": true,
+    "features": {
+    "buildkit": true
+    }
+}
+```
 * A node exporter was created to monitor the hardware of the EC2
-* two more jobs were added to the prometheus.yml file, 'node' and 'docker' 
-* A daemon.json file was then initialised 
+* Two more jobs were added to the prometheus.yml file, 'node' and 'docker'. This was done so that the metrics of the docker container and EC2 could be tracked
+* Docker was restarted
+* Prometheus was then run on the EC2 instance using the following command 
+```
+sudo docker run --rm -d \
+    --network=host \
+    --name prometheus\
+    -v /root/prometheus.yml:/etc/prometheus/prometheus.yml \
+    prom/prometheus \
+    --config.file=/etc/prometheus/prometheus.yml \
+    --web.enable-lifecycle 
+```
+* The scraper was then run using the docker image
+* A grafana dashboard was then set up to dispay the metrics of the EC2 instace and prometheus container
+![alt text](Images/Screenshot_10.png) ![alt text](Images/Screenshot_11.png) 
+* The panel to the right shows some of the hardware activity of the EC2 instance while the escraper is running
+![alt text](Images/Screenshot_12.png) 
+* The image above shows the status of the prometheus containers with the red line showing when the container was started
