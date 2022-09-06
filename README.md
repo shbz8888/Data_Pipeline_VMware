@@ -205,7 +205,7 @@ def check_RDS(name):
 ![alt text](Images/Screenshot_7.png) 
 * The containerisation offered by docker and the use of the AWS EC2 meant that the scraper could be run anywhere on any machine with any OS as the docker image contained all that was necessary (requirements.txt) and further pre-requisites were provided in the docker file
 
-Milestone 9:
+Milestone 8:
 * Prometheus was installed on the EC2 instance
 * A prometheus.yml file was created and a docker container running prometheus was formed
 ```nano
@@ -256,3 +256,10 @@ sudo docker run --rm -d \
 * The panel directly above shows some of the hardware activity of the EC2 instance while the scraper is running
 ![alt text](Images/Screenshot_12.png) 
 * The image above shows the status of the prometheus containers with the red line showing when the container was started
+Milestone 9:
+* The steps on https://docs.docker.com/ci-cd/github-actions/ were used to add the CI/CD functionality to the project
+* 2 github secrets were added, one for the dockerhub username and another for the a personal access token generated on dockerhub 
+* A github workflow was created to build a docker image every time the repo was pushed to and push it to dockerhub
+![alt text](Images/Screenshot_14.png) 
+* Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and the nclose the container everyday at a specified time
+![alt text](Images/Screenshot_13.png) 
