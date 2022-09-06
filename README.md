@@ -262,4 +262,4 @@ Milestone 9:
 * A github workflow was created to build a docker image every time the repo was pushed to and push it to dockerhub
 ![alt text](Images/Screenshot_14.png) 
 * Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and the nclose the container everyday at a specified time
-![alt text](Images/Screenshot_13.png) 
+![alt text](Images/Screenshot_13.png) ![alt text](Images/Screenshot_15.png) 
