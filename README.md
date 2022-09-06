@@ -259,7 +259,7 @@ sudo docker run --rm -d \
 Milestone 9:
 * The steps on https://docs.docker.com/ci-cd/github-actions/ were used to add the CI/CD functionality to the project
 * 2 github secrets were added, one for the dockerhub username and another for the a personal access token generated on dockerhub 
-* A github workflow was created to build a docker image every time the repo was pushed to and push it to dockerhub
+* A github workflow was created to build a docker image every time the repo was pushed to, and push it to dockerhub. This meant the image on dockerhub was always updated automatically.
 ![alt text](Images/Screenshot_14.png) 
 * Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and the nclose the container everyday at a specified time
 ![alt text](Images/Screenshot_13.png) ![alt text](Images/Screenshot_15.png) 
