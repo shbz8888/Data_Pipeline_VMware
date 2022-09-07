@@ -1,5 +1,8 @@
-# Data_Pipeline_VMware
-Milestone 1 & 2:
+<h1 align="center">Data_Pipeline_VMware</h1>
+<h2 align="center">Hello welcome to my README file :smiley: </h2>
+
+I have created a web scraper that deploys to the cloud to collect an industry relevant dataset stored in a SQL database.
+## Milestone 1 & 2:
 * A web scraper was built 
 * The website gorilla mind was chosen due to there being a lot of products available on the page to extract details from and me having some prior knowledge of the youtuber who owns the website, and so some familiarity with its  contents
 * Selenium was installed and imported in order to navigate the page autonomously
@@ -78,7 +81,7 @@ if __name__=="__main__":
            
 ```
 
-Milestone 3:
+## Milestone 3:
 * Methods were created to retrieve key details from one of the pages, those details being: name, price, description, size, number of reviews, and the link for an image
 * These methods were called extract_image and extract_text
 ```python
@@ -137,12 +140,12 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
 * the main method was also expanded in order to accomodate the new methods
 ![Alt text](Images/Screenshot2.png)
 
-Milestone 4:
+## Milestone 4:
 * unit testing was implemeted for my web scraper script, this form of testing was selected due it being automatic and the most granular form of testing
 * The methods from the script were split into public and private methods with the majority of the public methods (extract_text(), extract_image(), create_dict()) being unit tested
 * A setUp and tearDown method was also implemented to test each method independantly
 
-Milestone 5:
+## Milestone 5:
 * An S3 bucket was created using Amazon Web Services (AWS) and all raw data (dictionairies and image data) were uploaded to it using boto3
 * An AWS Relational Database (RDS) was also created as well as a pgadmin4 database which was connected to the RDS
 * The data collected from the webpage was converted to a database and cleaned using pandas:
@@ -174,7 +177,7 @@ def data_saving_update():
 
 ![alt text](Images/Screenshot_4.png)
 
-Milestone 6 & 7:
+## Milestone 6 & 7:
 * The RDS was checked for product data to prevent rescraping, this was acheived via the method below
 ```python
 def check_RDS(name):
@@ -207,7 +210,7 @@ def check_RDS(name):
 ![alt text](Images/Screenshot_7.png) 
 * The containerisation offered by docker and the use of the AWS EC2 meant that the scraper could be run anywhere on any machine with any OS as the docker image contained all that was necessary (requirements.txt) and further pre-requisites were provided in the docker file
 
-Milestone 8:
+## Milestone 8:
 * Prometheus was installed on the EC2 instance
 * A prometheus.yml file was created and a docker container running prometheus was formed
 ```nano
@@ -258,10 +261,10 @@ sudo docker run --rm -d \
 * The panel directly above shows some of the hardware activity of the EC2 instance while the scraper is running
 ![alt text](Images/Screenshot_12.png) 
 * The image above shows the status of the prometheus containers with the red line showing when the container was started
-Milestone 9:
+## Milestone 9:
 * The steps on https://docs.docker.com/ci-cd/github-actions/ were used to add the CI/CD functionality to the project
 * 2 github secrets were added, one for the dockerhub username and another for the a personal access token generated on dockerhub 
 * A github workflow was created to build a docker image every time the repo was pushed to, and push it to dockerhub. This meant the image on dockerhub was always updated automatically.
 ![alt text](Images/Screenshot_14.png) 
-* Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and the nclose the container everyday at a specified time
+* Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and then close the container everyday at a specified time
 ![alt text](Images/Screenshot_13.png) ![alt text](Images/Screenshot_15.png) 
