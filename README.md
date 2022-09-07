@@ -1,7 +1,7 @@
 # Data_Pipeline_VMware
 Milestone 1 & 2:
 * A web scraper was built 
-* The website gorilla mind was chosen due to there being a lot of products available on the page to extract details from and me having some prior knowledge of the youtuber who owns the website and so some familiarity with its  contents
+* The website gorilla mind was chosen due to there being a lot of products available on the page to extract details from and me having some prior knowledge of the youtuber who owns the website, and so some familiarity with its  contents
 * Selenium was installed and imported in order to navigate the page autonomously
 * Classes were used due to the functions within the scraper sharing similar outputs and inputs
 * The new scraper class finds the button for the 'all products' page, collects the link of that page, closes the sign up pop up, scrolls to the bottom of the page, collects the link for the second page from the 'next' button and then navigates to the second page
@@ -80,7 +80,7 @@ if __name__=="__main__":
 
 Milestone 3:
 * Methods were created to retrieve key details from one of the pages, those details being: name, price, description, size, number of reviews, and the link for an image
-* these methods were called extract_image and extract_text
+* These methods were called extract_image and extract_text
 ```python
 def extract_text(self):
         gear_container = self.driver.find_element(By.XPATH, '//div[@class="container"]')
@@ -106,10 +106,10 @@ def extract_image(self):
         time.sleep(1)
         return final_image_link
 ```
-* the information was stored in a dictionary and a UUID was generated, UUID was used because it would generate a unique ID each time the code ran and could be used later to refer to the product dictionary saved earlier
-* the information was then stored and saved locally in a folder called raw_data, the dictionary being saved as a .json file and the image being downloaded using the link in the dictionary
-* a new folder was created for the product within the raw_data folder, this new folder was named using the UUID so that each product tha would eventually be scraped would not be confused
-* within this new prodoct folder alongside the .json file for the dictionary an images folder was created which contained the downloaded image, the image was downloaded using the image link in the dictionary 
+* The information was stored in a dictionary and a UUID was generated. UUID was used because it would generate a unique ID each time the code ran and could be used later to refer to the product dictionary saved earlier
+* The information was then stored and saved locally in a folder called raw_data, the dictionary being saved as a .json file and the image being downloaded using the link in the dictionary
+* A new folder was created for the product within the raw_data folder
+* Within this new product folder alongside the .json file for the dictionary an images folder was created which contained the downloaded image
 ```python
 def save_dictionary_locally(self,dict_products,strID,final_image_link):
         path = "/home/shahbaz/Data_Pipeline_NewVM/Data_Pipeline_VMware/raw_data"
@@ -124,7 +124,7 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
         jsonFile.close()
         
 ```
-* the code for extracting the text, extracting the image link, downloading the image, and saving these locally were split into individual methods in order to increase granularity for easier reading and debugging in line with good software engineering practice. This meant that each method only dealt with one concern.
+* The code for extracting the text, extracting the image link, downloading the image, and saving these locally were **split into individual methods in order to increase granularity** for easier reading and debugging in line with good software engineering practice. This meant that each method only dealt with one concern.
 ```python
    def download_image(self,strID,final_image_link):
         os.makedirs('Images')
@@ -136,13 +136,15 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
 ```
 * the main method was also expanded in order to accomodate the new methods
 ![Alt text](Images/Screenshot2.png)
+
 Milestone 4:
 * unit testing was implemeted for my web scraper script, this form of testing was selected due it being automatic and the most granular form of testing
 * The methods from the script were split into public and private methods with the majority of the public methods (extract_text(), extract_image(), create_dict()) being unit tested
+* A setUp and tearDown method was also implemented to test each method independantly
 
 Milestone 5:
 * An S3 bucket was created using Amazon Web Services (AWS) and all raw data (dictionairies and image data) were uploaded to it using boto3
-* An AWS Relational Database (RDS) was also created, a pgadmin4 database was created and connected to the RDS
+* An AWS Relational Database (RDS) was also created as well as a pgadmin4 database which was connected to the RDS
 * The data collected from the webpage was converted to a database and cleaned using pandas:
 ```python 
 def convert_to_pd_dataframe(self):
@@ -153,16 +155,16 @@ def convert_to_pd_dataframe(self):
                 df['Number of reviews'] = df['Number of reviews'].astype('int64')
                 return df
 ```
-* The Price data was first stripped of any characters ($) and then converted to a float data type, this to allow  arithmetic calculations in pgadmin4, this was alos done to the 'Number of reviews' data
+* The Price data was first stripped of any characters ($) and then converted to a float data type, this was to allow  arithmetic calculations in pgadmin4, this was also done to the 'Number of reviews' data
 * The data was converted to an SQL database via sqlalchemy and psycopg2
-* Using the aforemnetioned tools an engine was created that connected to the pgadmin4 by extension RDS database:
+* Using the aforemnetioned tools an engine was created that connected to pgadmin4 and by extension the RDS database:
 ```python
 def upload_item_data_to_rds(self, df): 
                 engine = create_engine(f"postgresql+psycopg2://postgres:Yoruichi786@gorilla.ctcfqngfmu8j.eu-west-2.rds.amazonaws.com:5432/Gorilla")
                 df.to_sql('Products',engine,if_exists='append')
 ```
-* The 'if_exists' attrcibute was set to 'append' incase so that values can update if they change in the future
-* A method was created to notify the user that the scraper had finished saving all the data, due to the lack of shared parameters/attributes it was converted to a decorator:
+* The 'if_exists' attribute was set to 'append' so that values can update if they change in the future
+* A method was created to notify the user that the scraper had finished saving all the data, due to the lack of shared attributes it was converted to a decorator:
 ```python
 @staticmethod
 def data_saving_update():
@@ -201,7 +203,7 @@ def check_RDS(name):
 ```
 * A docker file was made and a docker image created before being uploaded to dockerhub
 ![alt text](Images/Screenshot_5.png) ![alt text](Images/Screenshot_6.png) 
-* An *EC2 instance* was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
+* An AWS EC2 instance was then created, docker was installed on the EC2 and the docker image was pulled before the scraper was run on the EC2 
 ![alt text](Images/Screenshot_7.png) 
 * The containerisation offered by docker and the use of the AWS EC2 meant that the scraper could be run anywhere on any machine with any OS as the docker image contained all that was necessary (requirements.txt) and further pre-requisites were provided in the docker file
 
