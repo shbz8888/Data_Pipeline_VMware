@@ -287,3 +287,4 @@ sudo docker run --rm -d \
 ![alt text](Images/Screenshot_14.png) 
 * Finally a new cronjob was created on the EC2 instance to pull the new image from dockerhub, run it and then close the container everyday at a specified time
 ![alt text](Images/Screenshot_13.png) ![alt text](Images/Screenshot_15.png) 
+<h1 align="center">Thank you for reading :smile: :blush:</h1>
