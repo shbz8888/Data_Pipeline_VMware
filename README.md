@@ -1,4 +1,4 @@
-<h1 align="center">Data_Pipeline_VMware</h1>
+<h1 align="center">Data_Pipeline</h1>
 <h2 align="center">Hello welcome to my README file :smiley: </h2>
 
 I have created a web scraper that deploys to the cloud to collect an industry relevant dataset stored in a SQL database.
