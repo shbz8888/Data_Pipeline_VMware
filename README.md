@@ -3,7 +3,7 @@
 
 I have created a web scraper that deploys to the cloud to collect an industry relevant dataset stored in a SQL database.
 
-Navigation note (main script in scraper.py file, testing in test_scraper.py)
+Navigation note - main script in scraper.py file, testing in test_scraper.py
 
 **Technologies used:**
 
