@@ -5,7 +5,7 @@ I have created a web scraper that deploys to the cloud to collect an industry re
 
 Technologies in:
 
-Throughout: [![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
+Throughout: [![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg) [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
 Milestone 1 - 
 
