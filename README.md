@@ -167,7 +167,7 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
 * A setUp and tearDown method was also implemented to test each method independantly
 ![Alt text](Images/Screenshot_16.png)
 
-## Milestone 5: Data cleaned with pandas and uploaded to AWS RDS & PostgreSQL
+## Milestone 5: Data cleaned with pandas and uploaded to AWS S3 & RDS and PostgreSQL
 * An S3 bucket was created using Amazon Web Services (AWS) and all raw data (dictionairies and image data) were uploaded to it using boto3
 * An AWS Relational Database (RDS) was also created as well as a pgadmin4 database which was connected to the RDS
 * The data collected from the webpage was converted to a database and cleaned using pandas:
