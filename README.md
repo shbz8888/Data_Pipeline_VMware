@@ -2,6 +2,13 @@
 <h2 align="center">Hello welcome to my README file :smiley: </h2>
 
 I have created a web scraper that deploys to the cloud to collect an industry relevant dataset stored in a SQL database.
+
+Technologies in:
+
+Throughout: [![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
+
+Milestone 1 - 
+
 ## Milestone 1 & 2:
 * A web scraper was built 
 * The website gorilla mind was chosen due to there being a lot of products available on the page to extract details from and me having some prior knowledge of the youtuber who owns the website, and so some familiarity with its  contents
