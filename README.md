@@ -23,7 +23,7 @@ Navigation note - main script in scraper.py file, testing in test_scraper.py
 
 **Milestone 9** - ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) (CI/CD) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) 
 
-## Milestone 1 & 2:
+## Milestone 1 & 2: # Initial web scraper built
 * A web scraper was built 
 * The website gorilla mind was chosen due to there being a lot of products available on the page to extract details from and me having some prior knowledge of the youtuber who owns the website, and so some familiarity with its  contents
 * Selenium was installed and imported in order to navigate the page autonomously
