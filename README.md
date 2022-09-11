@@ -165,6 +165,7 @@ def save_dictionary_locally(self,dict_products,strID,final_image_link):
 * unit testing was implemeted for my web scraper script, this form of testing was selected due it being automatic and the most granular form of testing
 * The methods from the script were split into public and private methods with the majority of the public methods (extract_text(), extract_image(), create_dict()) being unit tested
 * A setUp and tearDown method was also implemented to test each method independantly
+![Alt text](Images/Screenshot_16.png)
 
 ## Milestone 5: Data cleaned with pandas and uploaded to AWS RDS & PostgreSQL
 * An S3 bucket was created using Amazon Web Services (AWS) and all raw data (dictionairies and image data) were uploaded to it using boto3
